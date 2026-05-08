@@ -1,9 +1,0 @@
-tweepy
-git+https://www.github.com/accessibleapps/sound_lib
-tweak
-nuitka
-git+https://www.github.com/accessibleapps/accessible_output2
-git+https://www.github.com/accessibleapps/keyboard_handler
-pyperclip
-wxpython
-twitter-text-parser

@@ -1,8 +1,12 @@
 windist
 macdist
+.venv
 __pycache__
+.pytest_cache
 *.log
 *.spec
 *.pyc
 QPlay.exe
 quinter_updater\updater.exe
+.env
+.idea

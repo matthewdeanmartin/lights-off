@@ -1,0 +1,68 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lights-off"
+version = "0.1.0"
+description = "An accessible Mastodon client for screen reader users"
+readme = "README.md"
+license = { text = "GPL-2.0-only" }
+authors = [{ name = "Matthew Martin", email = "matthewdeanmartin@gmail.com" }]
+requires-python = ">=3.10"
+keywords = ["mastodon", "accessibility", "screen-reader", "wxpython"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Win32 (MS Windows)",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Communications",
+    "Topic :: Accessibility",
+]
+dependencies = [
+    "Mastodon.py>=2.2.1",
+    "tweak>=1.0.4",
+    "pyperclip>=1.8",
+    "wxpython>=4.2",
+    # Windows/macOS only — sound_lib uses BASS (Windows) or CoreAudio (macOS)
+    "sound_lib>=0.8.8; sys_platform != 'linux'",
+    # macOS screen reader integration
+    "accessible_output2>=0.17; sys_platform == 'darwin'",
+    # keyboard_handler is not on PyPI — install manually:
+    # pip install git+https://github.com/accessibleapps/keyboard_handler
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "python-dotenv>=1",
+]
+
+[project.scripts]
+lights-off = "lights_off.__main__:main"
+
+[project.urls]
+Homepage = "https://pypi.org/project/lights-off/"
+Repository = "https://github.com/matthewdeanmartin/lights-off"
+"Bug Tracker" = "https://github.com/matthewdeanmartin/lights-off/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["lights_off"]
+# Hatchling includes all files under lights_off/ by default, including
+# .ogg, .keymap, and .dll resource files.
+exclude = [
+    "tests/",
+    "spec/",
+    "*.pyw",
+    "*.bat",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.pyflakes]
+paths = ["lights_off"]

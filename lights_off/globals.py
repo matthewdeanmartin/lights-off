@@ -1,0 +1,146 @@
+import sys
+import shutil
+import platform
+from lights_off.GUI import main, misc
+import tweak
+import os
+import lights_off.mastodon_account as t
+import pickle
+from lights_off import timeline
+from lights_off import utils
+import threading
+from lights_off import sound
+accounts=[]
+prefs=None
+users=[]
+unknown_users=[]
+confpath=""
+errors=[]
+currentAccount=None
+timeline_settings=[]
+def  load():
+	global timeline_settings
+	threading.Thread(target=utils.cfu).start()
+	global confpath
+	global prefs
+	global users
+	prefs=tweak.Config(name="lights-off",autosave=True)
+	confpath=prefs.user_config_dir
+	if os.path.exists(confpath+"/sounds/default"):
+		shutil.rmtree(confpath+"/sounds/default")
+	if not os.path.exists(confpath+"/sounds"):
+		os.makedirs(confpath+"/sounds")
+	from importlib.resources import files
+	_pkg_sounds = files("lights_off").joinpath("sounds/default")
+	shutil.copytree(str(_pkg_sounds), confpath+"/sounds/default")
+	prefs.timelinecache_version=prefs.get("timelinecache_version",1)
+	if prefs.timelinecache_version==1:
+		if os.path.exists(confpath+"/timelinecache"):
+			os.remove(confpath+"/timelinecache")
+		prefs.timelinecache_version=2
+	prefs.user_reversed=prefs.get("user_reversed",False)
+	prefs.user_limit=prefs.get("user_limit",4)
+	prefs.tweetTemplate=prefs.get("tweetTemplate","$account.acct$: $content$ $created_at$")
+	prefs.messageTemplate=prefs.get("messageTemplate","$sender.acct$ to $recipient.acct$: $content$ $created_at$")
+	prefs.copyTemplate=prefs.get("copyTemplate","$account.display_name$ ($account.acct$): $content$")
+	prefs.retweetTemplate=prefs.get("retweetTemplate","Boosting $account.display_name$ ($account.acct$): $content$")
+	prefs.quoteTemplate=prefs.get("quoteTemplate","Quoting $account.display_name$ ($account.acct$): $content$")
+	prefs.userTemplate=prefs.get("userTemplate","$display_name$ ($acct$): $followers_count$ followers, $following_count$ following, $statuses_count$ posts. Bio: $note$")
+	prefs.accounts=prefs.get("accounts",1)
+	prefs.errors=prefs.get("errors",True)
+	prefs.streaming=prefs.get("streaming",False)
+	prefs.invisible=prefs.get("invisible",False)
+	prefs.invisible_sync=prefs.get("invisible_sync",True)
+	prefs.update_time=prefs.get("update_time",2)
+	prefs.volume=prefs.get("volume",1.0)
+	prefs.count=prefs.get("count",200)
+	prefs.repeat=prefs.get("repeat",False)
+	prefs.demojify=prefs.get("demojify",False)
+	prefs.demojify_tweet=prefs.get("demojify_tweet",False)
+	prefs.position=prefs.get("position",True)
+	prefs.chars_sent=prefs.get("chars_sent",0)
+	prefs.tweets_sent=prefs.get("posts_sent",0)
+	prefs.replies_sent=prefs.get("replies_sent",0)
+	prefs.quotes_sent=prefs.get("quotes_sent",0)
+	prefs.retweets_sent=prefs.get("boosts_sent",0)
+	prefs.likes_sent=prefs.get("favourites_sent",0)
+	prefs.statuses_received=prefs.get("statuses_received",0)
+	prefs.ask_dismiss=prefs.get("ask_dismiss",True)
+	prefs.reversed=prefs.get("reversed",False)
+	prefs.window_shown=prefs.get("window_shown",True)
+	prefs.autoOpenSingleURL=prefs.get("autoOpenSingleURL", False)
+	prefs.use24HourTime=prefs.get("use24HourTime", False)
+	if platform.system()!="Darwin":
+		prefs.media_player=prefs.get("media_player","")
+	else:
+		prefs.media_player=prefs.get("media_player","")
+	prefs.earcon_audio=prefs.get("earcon_audio",True)
+	prefs.earcon_top=prefs.get("earcon_top",False)
+	prefs.wrap=prefs.get("wrap",False)
+	if prefs.invisible:
+		main.window.register_keys()
+	try:
+		f=open(confpath+"/usercache","rb")
+		users=pickle.loads(f.read())
+		f.close()
+	except:
+		pass
+	if not prefs.user_reversed:
+		users=[]
+		prefs.user_reversed=True
+	load_timeline_settings()
+	for i in range(0,prefs.accounts):
+		add_session()
+
+def add_session():
+	global accounts
+	accounts.append(t.MastodonAccount(len(accounts)))
+
+def save_users():
+	global users
+	f=open(confpath+"/usercache","wb")
+	f.write(pickle.dumps(users))
+	f.close()
+
+def save_messages(account,messages):
+	f=open(account.confpath+"/messagecache","wb")
+	f.write(pickle.dumps(messages))
+	f.close()
+
+def load_messages(account):
+	try:
+		f=open(account.confpath+"/messagecache","rb")
+		messages=pickle.loads(f.read())
+		f.close()
+		return messages
+	except:
+		return None
+
+def save_timeline_settings():
+	global confpath
+	global timeline_settings
+	f=open(confpath+"/timelinecache","wb")
+	f.write(pickle.dumps(timeline_settings))
+	f.close()
+
+def load_timeline_settings():
+	global confpath
+	global timeline_settings
+	try:
+		f=open(confpath+"/timelinecache","rb")
+		timeline_settings=pickle.loads(f.read())
+		f.close()
+	except:
+		return False
+
+def get_timeline_settings(account_id,name):
+	global timeline_settings
+	for i in timeline_settings:
+		if i.tl==name and i.account_id==account_id:
+			return i
+	timeline_settings.append(timeline.TimelineSettings(account_id,name))
+	return timeline_settings[len(timeline_settings)-1]
+
+def clean_users():
+	global users
+	users=[]

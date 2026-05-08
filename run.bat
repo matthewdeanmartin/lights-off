@@ -1,3 +1,3 @@
 @echo off
-python quinter.pyw
+.venv\Scripts\python -m lights_off
 pause
