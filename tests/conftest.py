@@ -61,3 +61,4 @@ def api():
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "live: test requires live Mastodon API credentials")
+    config.addinivalue_line("markers", "live_write: live test that creates or mutates data")

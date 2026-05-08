@@ -1,11 +1,9 @@
 import requests
-from mastodon import MastodonError
 import platform
 from lights_off import globals
 from . import misc
 import wx
 from lights_off import utils
-from lights_off import sound
 text_box_size=(600,250)
 small_text_box_size=(600,150)
 

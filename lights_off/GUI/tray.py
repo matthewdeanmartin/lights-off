@@ -1,6 +1,5 @@
 import wx.adv
 from wx import Icon
-from . import main
 TRAY_TOOLTIP = 'lights-off'
 TRAY_ICON = 'icon.png'
 

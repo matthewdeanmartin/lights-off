@@ -10,3 +10,4 @@ QPlay.exe
 quinter_updater\updater.exe
 .env
 .idea
+/.coverage

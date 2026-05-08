@@ -11,7 +11,7 @@ def register_key(key,name,reg=True):
 			else:
 				main.window.handler.unregister_key(key,getattr(main.window,name))
 			return True
-		except:
+		except Exception:
 			return False
 	if hasattr(main.window,"on"+name):
 		try:
@@ -20,7 +20,7 @@ def register_key(key,name,reg=True):
 			else:
 				main.window.handler.unregister_key(key,getattr(main.window,"on"+name))
 			return True
-		except:
+		except Exception:
 			return False
 	if hasattr(main.window,"On"+name):
 		try:
@@ -29,7 +29,7 @@ def register_key(key,name,reg=True):
 			else:
 				main.window.handler.unregister_key(key,getattr(main.window,"On"+name))
 			return True
-		except:
+		except Exception:
 			return False
 	if hasattr(inv,name):
 		try:
@@ -38,7 +38,7 @@ def register_key(key,name,reg=True):
 			else:
 				main.window.handler.unregister_key(key,getattr(inv,name))
 			return True
-		except:
+		except Exception:
 			return False
 
 class invisible_interface(object):
@@ -105,11 +105,11 @@ class invisible_interface(object):
 			return
 		globals.currentAccount.currentTimeline.index -= 20
 		self.focus_tl_item()
-	
+
 	def top_item(self):
 		globals.currentAccount.currentTimeline.index=0
 		self.focus_tl_item()
-	
+
 	def next_item(self):
 		if globals.currentAccount.currentTimeline.index==len(globals.currentAccount.currentTimeline.statuses)-1 or len(globals.currentAccount.currentTimeline.statuses)==0:
 			sound.play(globals.currentAccount,"boundary")
@@ -118,7 +118,7 @@ class invisible_interface(object):
 			return
 		globals.currentAccount.currentTimeline.index+=1
 		self.focus_tl_item()
-	
+
 	def next_item_jump(self):
 		if globals.currentAccount.currentTimeline.index >= len(globals.currentAccount.currentTimeline.statuses) - 20:
 			sound.play(globals.currentAccount,"boundary")
@@ -127,15 +127,15 @@ class invisible_interface(object):
 			return
 		globals.currentAccount.currentTimeline.index += 20
 		self.focus_tl_item()
-	
+
 	def bottom_item(self):
 		globals.currentAccount.currentTimeline.index=len(globals.currentAccount.currentTimeline.statuses)-1
 		self.focus_tl_item()
-	
+
 	def previous_from_user(self):
 		main.window.OnPreviousFromUser()
 		self.speak_item()
-	
+
 	def next_from_user(self):
 		main.window.OnNextFromUser()
 		self.speak_item()

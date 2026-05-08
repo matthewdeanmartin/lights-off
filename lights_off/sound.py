@@ -3,7 +3,6 @@ import sound_lib
 from sound_lib import stream
 from sound_lib import output as o
 from lights_off import globals
-from lights_off import speak
 import re
 
 out = o.Output()
@@ -30,7 +29,7 @@ def get_media_urls(urls):
 	result = []
 	for u in urls:
 		for service in media_matchlist:
-			if re.match(service['match'], u.lower()) != None:
+			if re.match(service['match'], u.lower()) is not None:
 				result.append({"url":u, "func":service['func']})
 	return result
 
@@ -52,7 +51,7 @@ def _bundled_sound_path(filename):
 
 def play(account, filename, pack="", wait=False):
 	global handle
-	if handle != None:
+	if handle is not None:
 		try:
 			handle.stop()
 		except sound_lib.main.BassError:

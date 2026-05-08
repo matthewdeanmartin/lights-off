@@ -1,4 +1,3 @@
-import math
 import os
 import platform
 import subprocess
@@ -50,7 +49,7 @@ def follow(account,status):
 
 def follow_user(account,username):
 	try:
-		user=account.follow(username)
+		account.follow(username)
 		sound.play(globals.currentAccount,"follow")
 	except MastodonError as error:
 		utils.handle_error(error,"Follow "+username)
@@ -64,7 +63,7 @@ def unfollow(account,status):
 
 def unfollow_user(account,username):
 	try:
-		user=account.unfollow(username)
+		account.unfollow(username)
 		sound.play(globals.currentAccount,"unfollow")
 	except MastodonError as error:
 		utils.handle_error(error,"Unfollow "+username)

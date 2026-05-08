@@ -61,6 +61,7 @@ def main():
 	import lights_off.globals as globals_mod
 
 	globals_mod.load()
+	log.info("config/state directory: %s", globals_mod.confpath)
 
 	if globals_mod.prefs.window_shown:
 		main_gui.window.Show()

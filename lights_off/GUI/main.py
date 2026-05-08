@@ -9,10 +9,9 @@ import wx
 from keyboard_handler.wx_handler import WXKeyboardHandler
 from lights_off import globals
 from lights_off import speak
-from . import account_options, accounts, chooser, invisible, lists, misc, options, profile, search, timelines, tray, tweet, view
+from . import account_options, accounts, invisible, lists, misc, options, profile, search, timelines, tray, tweet, view
 from lights_off import utils
 from lights_off import sound
-from lights_off import timeline
 import threading
 
 _log = logging.getLogger("lights_off.menu")
@@ -277,13 +276,13 @@ class MainGui(wx.Frame):
 		self.invisible=True
 		for i in self._read_keymap():
 			key=i.strip(" ").split("=")
-			success=invisible.register_key(key[0],key[1])
+			invisible.register_key(key[0],key[1])
 
 	def unregister_keys(self):
 		self.invisible=False
 		for i in self._read_keymap():
 			key=i.split("=")
-			success=invisible.register_key(key[0],key[1],False)
+			invisible.register_key(key[0],key[1],False)
 
 	def ToggleWindow(self):
 		if self.IsShown():
@@ -345,10 +344,10 @@ class MainGui(wx.Frame):
 			self.trayicon.on_exit(event,False)
 		self.Destroy()
 		sys.exit()
-	
+
 	@_logged("Audio / Play media")
 	def OnPlayExternal(self,event=None):
-		thread=threading.Thread(target=misc.play_external,args=(globals.currentAccount.currentTimeline.statuses[globals.currentAccount.currentTimeline.index],)).start()
+		threading.Thread(target=misc.play_external,args=(globals.currentAccount.currentTimeline.statuses[globals.currentAccount.currentTimeline.index],)).start()
 
 
 	@_logged("Actions / Load conversation")
@@ -417,7 +416,7 @@ class MainGui(wx.Frame):
 			self.list.Insert(i.name,self.list.GetCount())
 		try:
 			self.list.SetSelection(old_selection)
-		except:
+		except Exception:
 			self.list.SetSelection(1)
 
 	def on_list_change(self, event):
@@ -467,7 +466,7 @@ class MainGui(wx.Frame):
 			self.list2.Insert(i,self.list2.GetCount())
 		try:
 			self.list2.SetSelection(globals.currentAccount.currentTimeline.index)
-		except:
+		except Exception:
 			self.list2.SetSelection(globals.currentAccount.currentTimeline.index-1)
 		self.list2.Thaw()
 
@@ -488,6 +487,8 @@ class MainGui(wx.Frame):
 			item=tl.statuses[tl.index]
 			if len(sound.get_media_urls(utils.find_urls_in_tweet(item))) > 0:
 				sound.play(globals.currentAccount,"media")
+		from lights_off.GUI.invisible import inv
+		inv.speak_item()
 
 	@_logged("Timeline / Refresh")
 	def onRefresh(self,event=None):

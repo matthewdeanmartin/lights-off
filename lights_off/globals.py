@@ -1,7 +1,6 @@
-import sys
 import shutil
 import platform
-from lights_off.GUI import main, misc
+from lights_off.GUI import main
 import tweak
 import os
 import lights_off.mastodon_account as t
@@ -9,7 +8,6 @@ import pickle
 from lights_off import timeline
 from lights_off import utils
 import threading
-from lights_off import sound
 accounts=[]
 prefs=None
 users=[]
@@ -83,7 +81,7 @@ def  load():
 		f=open(confpath+"/usercache","rb")
 		users=pickle.loads(f.read())
 		f.close()
-	except:
+	except Exception:
 		pass
 	if not prefs.user_reversed:
 		users=[]
@@ -113,7 +111,7 @@ def load_messages(account):
 		messages=pickle.loads(f.read())
 		f.close()
 		return messages
-	except:
+	except Exception:
 		return None
 
 def save_timeline_settings():
@@ -130,7 +128,7 @@ def load_timeline_settings():
 		f=open(confpath+"/timelinecache","rb")
 		timeline_settings=pickle.loads(f.read())
 		f.close()
-	except:
+	except Exception:
 		return False
 
 def get_timeline_settings(account_id,name):

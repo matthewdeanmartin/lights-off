@@ -1,5 +1,4 @@
 import wx
-from lights_off import globals
 from . import misc
 
 class SearchGui(wx.Dialog):

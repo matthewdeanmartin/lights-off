@@ -1,4 +1,3 @@
-from lights_off import globals
 import wx
 from html.parser import HTMLParser
 

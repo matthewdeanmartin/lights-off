@@ -1,6 +1,4 @@
 from mastodon import StreamListener
-from lights_off.GUI import main
-from lights_off import globals
 from lights_off import speak
 from lights_off import utils
 

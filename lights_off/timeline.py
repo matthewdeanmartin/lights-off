@@ -1,4 +1,3 @@
-from mastodon import MastodonError
 import time
 from lights_off import globals
 from lights_off import utils
@@ -80,7 +79,7 @@ class timeline(object):
 			self.load_conversation()
 		if self.type=="messages":
 			m=globals.load_messages(self.account)
-			if m!=None:
+			if m is not None:
 				self.statuses=m
 				self.initial=False
 
@@ -125,7 +124,7 @@ class timeline(object):
 				self.process_status(utils.lookup_status(self.account,status.in_reply_to_id))
 			if status.reblog:
 				self.process_status(status.reblog)
-		except:
+		except Exception:
 			pass
 
 	def hide_tl(self):
@@ -197,7 +196,7 @@ class timeline(object):
 		# works downstream.
 		if tl is not None:
 			tl=[utils.ensure_attr_access(i) for i in tl]
-		if tl!=None:
+		if tl is not None:
 			newitems=0
 			objs=[]
 			objs2=[]
@@ -261,7 +260,7 @@ class timeline(object):
 						if globals.currentAccount==self.account and self.account.currentTimeline==self and len(self.statuses)>0:
 							try:
 								main.window.list2.SetSelection(self.index)
-							except:
+							except Exception:
 								pass
 				if back and globals.prefs.reversed:
 					self.index+=newitems
@@ -342,7 +341,7 @@ def timelineThread(account):
 						i.members=[]
 						for i2 in members:
 							i.members.append(i2.id)
-					except:
+					except Exception:
 						pass
 				if i.type!="conversation":
 					i.load()
@@ -358,7 +357,7 @@ def timelineThread(account):
 					if u not in globals.users:
 						globals.users.insert(0,u)
 				globals.unknown_users=[]
-			except:
+			except Exception:
 				globals.unknown_users=[]
 
 		globals.save_users()

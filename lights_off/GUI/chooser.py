@@ -1,17 +1,10 @@
 from mastodon import MastodonError
-from lights_off import globals
-from lights_off import sound
-from lights_off import timeline
 from lights_off import utils
-import time
 import wx
-import webbrowser
-import os
-import platform
-from . import lists, main, misc, view
+from . import lists, misc, view
 
 class ChooseGui(wx.Dialog):
-	
+
 	#constants for the types we might need to handle
 	TYPE_BLOCK="block"
 	TYPE_FOLLOW="follow"
@@ -65,11 +58,11 @@ class ChooseGui(wx.Dialog):
 		elif self.type==self.TYPE_URL:
 			utils.openURL(self.returnvalue)
 		elif self.type==self.TYPE_LIST:
-			l=lists.ListsGui(self.account,utils.lookup_user_name(self.account,self.returnvalue))
-			l.Show()
+			gui=lists.ListsGui(self.account,utils.lookup_user_name(self.account,self.returnvalue))
+			gui.Show()
 		elif self.type==self.TYPE_LIST_R:
-			l=lists.ListsGui(self.account,utils.lookup_user_name(self.account,self.returnvalue),False)
-			l.Show()
+			gui=lists.ListsGui(self.account,utils.lookup_user_name(self.account,self.returnvalue),False)
+			gui.Show()
 		elif self.type==self.TYPE_FOLLOW:
 			misc.follow_user(self.account,self.returnvalue)
 		elif self.type==self.TYPE_UNFOLLOW:

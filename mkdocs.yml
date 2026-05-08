@@ -1,0 +1,41 @@
+site_name: "Lights Off"
+site_description: "Accessible Mastodon client for screen reader users. Fork of Quinter."
+site_author: "Matthew Dean Martin"
+repo_url: "https://github.com/matthewdeanmartin/lights-off"
+edit_uri: "edit/main/rtd/"
+docs_dir: "rtd"
+theme:
+  name: readthedocs
+
+markdown_extensions:
+  - tables
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - Overview:
+      - What is Lights Off?: overview/what-is-lights-off.md
+      - Who is it for?: overview/who-is-this-for.md
+  - Installation:
+      - Overview: installation/overview.md
+      - Windows: installation/windows.md
+      - macOS: installation/macos.md
+      - Linux: installation/linux.md
+  - Screen Readers:
+      - Overview: screen-readers/overview.md
+      - Windows (NVDA / JAWS / SAPI): screen-readers/windows.md
+      - macOS (VoiceOver): screen-readers/macos.md
+      - Linux (Speech Dispatcher): screen-readers/linux.md
+  - Getting Started:
+      - Quickstart: getting-started/quickstart.md
+      - Connecting your account: getting-started/connecting-account.md
+      - Keyboard reference: getting-started/keyboard-reference.md
+  - Reference:
+      - Roadmap: reference/roadmap.md
+      - Security: reference/security.md
+      - Component provenance: reference/component-provenance.md
+      - Troubleshooting: reference/troubleshooting.md

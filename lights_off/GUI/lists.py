@@ -1,5 +1,4 @@
 import wx
-from lights_off import globals
 from . import misc
 from . import view
 
@@ -21,7 +20,7 @@ class ListsGui(wx.Dialog):
 		self.list.Bind(wx.EVT_LISTBOX, self.on_list_change)
 		self.add_items()
 		button_row = wx.BoxSizer(wx.HORIZONTAL)
-		if self.user!=None:
+		if self.user is not None:
 			if self.add:
 				self.load = wx.Button(self.panel, wx.ID_DEFAULT, "&Add")
 			else:
@@ -35,7 +34,7 @@ class ListsGui(wx.Dialog):
 		if len(self.lists)>0:
 			self.list.SetSelection(0)
 			self.on_list_change(None)
-		if self.user==None:
+		if self.user is None:
 			self.new = wx.Button(self.panel, wx.ID_DEFAULT, "&New list")
 			self.new.Bind(wx.EVT_BUTTON, self.New)
 			button_row.Add(self.new, 0, wx.ALL, 5)
@@ -88,12 +87,12 @@ class ListsGui(wx.Dialog):
 			self.remove.Enable(True)
 
 	def New(self, event):
-		l=NewListGui(self.account)
-		l.Show()
+		gui=NewListGui(self.account)
+		gui.Show()
 
 	def Edit(self, event):
-		l=NewListGui(self.account,self.lists[self.list.GetSelection()])
-		l.Show()
+		gui=NewListGui(self.account,self.lists[self.list.GetSelection()])
+		gui.Show()
 
 	def Remove(self, event):
 		self.account.api.list_delete(self.lists[self.list.GetSelection()].id)
@@ -108,7 +107,7 @@ class ListsGui(wx.Dialog):
 		v.Show()
 
 	def Load(self, event):
-		if self.user==None:
+		if self.user is None:
 			misc.list_timeline(self.account,self.lists[self.list.GetSelection()].title, self.lists[self.list.GetSelection()].id)
 		else:
 			if self.add:
@@ -125,7 +124,7 @@ class NewListGui(wx.Dialog):
 		self.account=account
 		self.list=list
 		title="New list"
-		if list!=None:
+		if list is not None:
 			title="Edit list "+list.title
 		wx.Dialog.__init__(self, None, title=title, style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
 		self.Bind(wx.EVT_CLOSE, self.OnClose)
@@ -136,7 +135,7 @@ class NewListGui(wx.Dialog):
 		self.text = wx.TextCtrl(self.panel, -1, "",style=wx.TE_PROCESS_ENTER|wx.TE_DONTWRAP, size=(400,-1))
 		self.main_box.Add(self.text, 0, wx.ALL|wx.EXPAND, 10)
 		self.text.SetFocus()
-		if list!=None:
+		if list is not None:
 			self.text.SetValue(self.list.title)
 		self.type_label = wx.StaticText(self.panel, -1, "Reply policy")
 		self.main_box.Add(self.type_label, 0, wx.LEFT|wx.RIGHT|wx.TOP, 10)
@@ -147,7 +146,7 @@ class NewListGui(wx.Dialog):
 		self.type.SetSelection(0)
 		self.main_box.Add(self.type, 0, wx.ALL|wx.EXPAND, 10)
 		button_row = wx.BoxSizer(wx.HORIZONTAL)
-		if self.list!=None:
+		if self.list is not None:
 			self.create = wx.Button(self.panel, wx.ID_DEFAULT, "&Edit list")
 		else:
 			self.create = wx.Button(self.panel, wx.ID_DEFAULT, "&Create list")
@@ -166,7 +165,7 @@ class NewListGui(wx.Dialog):
 
 	def Create(self, event):
 		reply_policy=self.type.GetString(self.type.GetSelection())
-		if self.list==None:
+		if self.list is None:
 			self.account.api.list_create(self.text.GetValue(), replies_policy=reply_policy)
 		else:
 			self.account.api.list_update(self.list.id, self.text.GetValue(), replies_policy=reply_policy)

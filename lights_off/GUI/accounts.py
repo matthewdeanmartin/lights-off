@@ -1,7 +1,7 @@
 from lights_off import application
 import wx
 from lights_off import globals
-from . import main, misc
+from . import main
 
 class AccountsGui(wx.Dialog):
 	def __init__(self):

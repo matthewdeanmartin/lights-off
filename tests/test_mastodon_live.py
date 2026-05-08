@@ -73,6 +73,8 @@ class TestSearch:
 
 
 class TestPostRoundTrip:
+    pytestmark = pytest.mark.live_write
+
     def test_post_and_delete(self, api):
         """Post a private status and immediately delete it."""
         s = api.status_post(
@@ -147,6 +149,7 @@ class TestLists:
         lists = api.lists()
         assert isinstance(lists, list)
 
+    @pytest.mark.live_write
     def test_list_create_update_delete(self, api):
         lst = api.list_create("test-lights-off")
         assert lst.title == "test-lights-off"

@@ -1,9 +1,7 @@
 from sound_lib import stream
-import platform
-import os, sys
+import os
 from lights_off import globals
 import wx
-from . import main
 
 class general(wx.Panel, wx.Dialog):
 	def __init__(self, account, parent):
@@ -36,7 +34,7 @@ class general(wx.Panel, wx.Dialog):
 					if account.prefs.soundpack==dirs2[i]:
 						self.soundpackslist.SetSelection(self.soundpackslist.GetCount()-1)
 						self.sp=dirs2[i]
-		except:
+		except OSError:
 			pass
 		if not hasattr(self,"sp"):
 			self.sp="default"

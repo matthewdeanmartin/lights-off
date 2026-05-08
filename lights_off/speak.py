@@ -1,5 +1,4 @@
 import platform
-import sys
 
 _system = platform.system()
 
@@ -11,8 +10,9 @@ if _system == "Darwin":
 
 elif _system == "Windows":
 	from lights_off import Tolk as _tolk
+	_tolk.try_sapi(True)
+	_tolk.prefer_sapi(True)
 	_tolk.load()
-	_tolk.try_sapi = True
 	def speak(text, interrupt=False):
 		_tolk.output(text, interrupt)
 

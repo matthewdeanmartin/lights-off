@@ -1,7 +1,4 @@
-from lights_off import application
 import wx
-from lights_off import globals
-from . import main, misc
 
 class HiddenTimelinesGui(wx.Dialog):
 	def __init__(self,account):
@@ -33,7 +30,6 @@ class HiddenTimelinesGui(wx.Dialog):
 		self.Centre()
 
 	def add_items(self):
-		index=0
 		for i in self.account.list_timelines(True):
 			self.list.Insert(i.name,self.list.GetCount())
 		self.list.SetSelection(0)

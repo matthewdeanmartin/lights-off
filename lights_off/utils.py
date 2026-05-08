@@ -1,5 +1,3 @@
-import threading
-import sys
 import html
 from html.parser import HTMLParser
 import platform
@@ -25,8 +23,40 @@ class _HTMLStripper(HTMLParser):
 	def __init__(self):
 		super().__init__()
 		self.parts=[]
+		self._in_anchor=False
+		self._anchor_text=[]
+		self._anchor_href=""
+
+	def handle_starttag(self,tag,attrs):
+		if tag=="a":
+			self._in_anchor=True
+			self._anchor_text=[]
+			self._anchor_href=dict(attrs).get("href","")
+
+	def handle_endtag(self,tag):
+		if tag=="a" and self._in_anchor:
+			text="".join(self._anchor_text).strip()
+			href=self._anchor_href
+			# Mastodon wraps bare URLs in anchors whose visible text is the
+			# shortened URL (e.g. "github.com/foo/ba…"). Use that instead of
+			# the raw href, unless the anchor text itself looks like a full URL.
+			if href and (href.startswith("http://") or href.startswith("https://")):
+				if text and not (text.startswith("http://") or text.startswith("https://")):
+					self.parts.append(text)
+				else:
+					# fall back to domain only
+					from urllib.parse import urlparse
+					self.parts.append(urlparse(href).netloc or text)
+			else:
+				self.parts.append(text)
+			self._in_anchor=False
+
 	def handle_data(self,data):
-		self.parts.append(data)
+		if self._in_anchor:
+			self._anchor_text.append(data)
+		else:
+			self.parts.append(data)
+
 	def get_text(self):
 		return "".join(self.parts)
 
@@ -35,6 +65,13 @@ def strip_html(raw):
 	s=_HTMLStripper()
 	s.feed(raw)
 	return s.get_text()
+
+
+def shorten_acct(acct):
+	"""Return just the local username part, dropping @instance."""
+	if acct and "@" in acct:
+		return acct.split("@")[0]
+	return acct
 
 
 def process_tweet(s, return_only_text=False, template=""):
@@ -82,7 +119,7 @@ def find_urls_in_tweet(s):
 				urls.append(m.url)
 	return urls
 
-def template_to_string(s, template=""):
+def template_to_string(s, template="", _shorten_acct=True):
 	if template=="":
 		template=globals.prefs.tweetTemplate
 	temp=template.split(" ")
@@ -100,6 +137,8 @@ def template_to_string(s, template=""):
 						val=getattr(f1,p)
 						if globals.prefs.demojify and ("name" in (o,p)):
 							val=demojify(str(val)) or getattr(f1,"acct","")
+						if _shorten_acct and p=="acct":
+							val=shorten_acct(str(val))
 						template=template.replace("$"+t[1]+"$",str(val))
 					except Exception as e:
 						print(e)
@@ -113,6 +152,8 @@ def template_to_string(s, template=""):
 							val=demojify(str(val))
 						if t[1]=="created_at":
 							val=parse_date(val)
+						if _shorten_acct and t[1]=="acct":
+							val=shorten_acct(str(val))
 						template=template.replace("$"+t[1]+"$",str(val))
 					except Exception as e:
 						print(e)
@@ -136,7 +177,7 @@ def get_users_in_tweet(account, s):
 
 def dict_match(d1, d2):
 	for i in d2:
-		if not i in d1:
+		if i not in d1:
 			d1[i]=d2[i]
 	return d1
 
@@ -144,7 +185,7 @@ def class_match(d1, d2):
 	names1=[p for p in dir(d1) if isinstance(getattr(d1,p),property)]
 	names2=[p for p in dir(d2) if isinstance(getattr(d2,p),property)]
 	for i in names2:
-		if not i in names1:
+		if i not in names1:
 			setattr(d1,i,getattr(d2,i,None))
 	return d1
 
@@ -158,7 +199,7 @@ def parse_date(date,convert=True):
 	if convert:
 		try:
 			date+=datetime.timedelta(seconds=0-tz)
-		except:
+		except Exception:
 			pass
 	returnstring=""
 
@@ -177,7 +218,7 @@ def parse_date(date,convert=True):
 			returnstring=date.strftime(f"{dateFormatString}, ")
 
 		returnstring+=date.strftime(timeFormatString)
-	except:
+	except Exception:
 		pass
 	return returnstring
 
@@ -369,7 +410,7 @@ def speak_user(account, users):
 	for i in users:
 		user=lookup_user_name(account,i)
 		if user is not None and user!=-1:
-			text+=". "+template_to_string(user,globals.prefs.userTemplate)
+			text+=". "+template_to_string(user,globals.prefs.userTemplate,_shorten_acct=False)
 		text=text.rstrip(".")
 	text=text.lstrip(".")
 	speak.speak(str(len(users))+" users: "+text)

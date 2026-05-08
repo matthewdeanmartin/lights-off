@@ -1,6 +1,5 @@
 from lights_off import timeline
 import platform
-import os, sys
 from lights_off import globals
 import wx
 from . import main

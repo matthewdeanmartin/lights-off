@@ -9,12 +9,10 @@ from mastodon import Mastodon, MastodonError
 
 from lights_off import application
 from lights_off import globals
-from lights_off import sound
 from lights_off import speak
 from lights_off import streaming
 from lights_off import timeline
 import tweak
-from lights_off import utils
 from lights_off.GUI import main, misc
 from lights_off.GUI.ask import ask
 from lights_off import api_log
