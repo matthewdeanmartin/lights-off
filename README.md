@@ -54,6 +54,11 @@ tox
 
 Pull requests welcome. For large feature additions, open an issue first.
 
-## License
+## Licenses
 
-GPL-2.0-only. `Tolk.py` is LGPLv3 (copyright Davy Kager).
+- Quinter - no declared license, per Mastodon conversation with Quinn, forking and MIT is okay.
+- SAAPI65.dll - (C) All rights reserved
+- nvdaControllerClient64.dll LGPL
+- GPL-2.0-only. `Tolk.py` is LGPLv3 (copyright Davy Kager).
+- .ogg soundfiles - unknown license
+- keyboard_handler - vendorized, MIT, copyright Christopher Toth

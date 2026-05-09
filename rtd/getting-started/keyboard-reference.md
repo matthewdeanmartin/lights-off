@@ -10,8 +10,8 @@ On macOS it maps to the **Command (⌘)** key unless stated otherwise.
 | Manage accounts | Ctrl+A | Cmd+A |
 | Global options | (menu) | Cmd+, |
 | Exit | Alt+F4 | Cmd+Q |
-| Toggle window visibility | Ctrl+Win+Shift+T | — |
-| Quit (always-on) | Alt+Win+Shift+Q | — |
+| Toggle window visibility | Ctrl+Alt+Win+T | — |
+| Quit (always-on) | Ctrl+Alt+Win+Q | — |
 
 ## Actions
 

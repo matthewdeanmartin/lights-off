@@ -156,14 +156,6 @@ wheels = [
 ]
 
 [[package]]
-name = "keyboard-handler"
-version = "0.53"
-source = { git = "https://github.com/accessibleapps/keyboard_handler#dd2efbd802ec66ad8481a13335d2baed71729e96" }
-dependencies = [
-    { name = "pywin32", marker = "sys_platform == 'win32'" },
-]
-
-[[package]]
 name = "libloader"
 version = "1.4.3"
 source = { registry = "https://pypi.org/simple" }
@@ -181,7 +173,6 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "accessible-output2", marker = "sys_platform == 'darwin'" },
-    { name = "keyboard-handler" },
     { name = "mastodon-py" },
     { name = "pyperclip" },
     { name = "sound-lib", marker = "sys_platform != 'linux'" },
@@ -199,7 +190,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "accessible-output2", marker = "sys_platform == 'darwin'", specifier = ">=0.17" },
-    { name = "keyboard-handler", git = "https://github.com/accessibleapps/keyboard_handler" },
     { name = "mastodon-py", specifier = ">=2.2.1" },
     { name = "pyperclip", specifier = ">=1.8" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8" },

@@ -36,8 +36,8 @@ class MainGui(wx.Frame):
 		if platform.system()!="Darwin":
 			self.trayicon=tray.TaskBarIcon(self)
 		self.handler=WXKeyboardHandler(self)
-		self.handler.register_key("control+win+shift+t",self.ToggleWindow)
-		self.handler.register_key("alt+win+shift+q",self.OnClose)
+		self.handler.register_key("control+alt+win+t",self.ToggleWindow)
+		self.handler.register_key("control+alt+win+q",self.OnClose)
 		self.Bind(wx.EVT_CLOSE, self.OnClose)
 		self.panel = wx.Panel(self)
 		self.main_box = wx.BoxSizer(wx.VERTICAL)

@@ -2,11 +2,12 @@ from __future__ import absolute_import
 import functools
 import logging
 
-logger = logging.getLogger("keyboard_handler")
 import wx
 
 from .main import KeyboardHandler, KeyboardHandlerError
 from . import key_constants
+
+logger = logging.getLogger("keyboard_handler")
 
 __all__ = ["WXKeyboardHandler", "WXControlKeyboardHandler"]
 

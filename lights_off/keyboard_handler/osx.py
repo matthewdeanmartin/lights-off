@@ -1,9 +1,7 @@
 from __future__ import absolute_import
-from AppKit import *
+from AppKit import NSApplication, NSSystemDefined, NSRunAlertPanel  # noqa: F401
 from PyObjCTools import AppHelper
 from Carbon.CarbonEvt import RegisterEventHotKey, UnregisterEventHotKey, GetApplicationEventTarget
-from Carbon.Events import cmdKey, controlKey
-import struct
 from threading import Thread
 
 from .main import KeyboardHandler
