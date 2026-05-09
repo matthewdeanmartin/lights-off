@@ -1,4 +1,4 @@
-lights-off 0.1
+lights-off 0.1.0
 Complete rewrite of backend from Twitter (tweepy) to Mastodon (Mastodon.py).
 OAuth 2.0 authentication with per-instance client registration.
 "Tweets" are now "posts", "retweets" are "boosts", "likes" are "favourites".
