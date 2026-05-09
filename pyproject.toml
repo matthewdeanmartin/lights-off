@@ -34,7 +34,6 @@ dependencies = [
     "sound_lib>=0.8.8; sys_platform != 'linux'",
     # macOS screen reader integration
     "accessible_output2>=0.17; sys_platform == 'darwin'",
-    "keyboard_handler @ git+https://github.com/accessibleapps/keyboard_handler",
 ]
 
 [project.optional-dependencies]
@@ -58,12 +57,21 @@ allow-direct-references = true
 [tool.hatch.build.targets.wheel]
 packages = ["lights_off"]
 # Hatchling includes all files under lights_off/ by default, including
-# .ogg, .keymap, and .dll resource files.
+# .ogg, .keymap, .dll resource files, and vendored keyboard_handler.
 exclude = [
     "tests/",
     "spec/",
     "*.pyw",
     "*.bat",
+]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "lights_off/",
+    "tests/",
+    "pyproject.toml",
+    "README.md",
+    "LICENSE",
 ]
 
 [tool.pytest.ini_options]

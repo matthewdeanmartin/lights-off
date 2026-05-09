@@ -6,7 +6,7 @@ import sys
 import logging
 from lights_off import application
 import wx
-from keyboard_handler.wx_handler import WXKeyboardHandler
+from lights_off.keyboard_handler.wx_handler import WXKeyboardHandler
 from lights_off import globals
 from lights_off import speak
 from . import account_options, accounts, invisible, lists, misc, options, profile, search, timelines, tray, tweet, view
