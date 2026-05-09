@@ -174,6 +174,7 @@ source = { editable = "." }
 dependencies = [
     { name = "accessible-output2", marker = "sys_platform == 'darwin'" },
     { name = "mastodon-py" },
+    { name = "packaging" },
     { name = "pyperclip" },
     { name = "sound-lib", marker = "sys_platform != 'linux'" },
     { name = "tweak" },
@@ -191,6 +192,7 @@ dev = [
 requires-dist = [
     { name = "accessible-output2", marker = "sys_platform == 'darwin'", specifier = ">=0.17" },
     { name = "mastodon-py", specifier = ">=2.2.1" },
+    { name = "packaging", specifier = ">=24" },
     { name = "pyperclip", specifier = ">=1.8" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8" },
     { name = "python-dotenv", marker = "extra == 'dev'", specifier = ">=1" },

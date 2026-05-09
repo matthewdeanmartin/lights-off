@@ -1,4 +1,5 @@
 import html
+from packaging.version import Version
 from html.parser import HTMLParser
 import logging
 import platform
@@ -476,7 +477,7 @@ def cfu(silent=True):
 		data=json.loads(requests.get(url, timeout=5).content.decode())
 		latest=data["info"]["version"]
 		_cfu_log.info("latest version on PyPI: %s", latest)
-		if application.version<latest:
+		if Version(application.version) < Version(latest):
 			_cfu_log.info("update available: %s -> %s", application.version, latest)
 			ud=question(
 				"Update available: "+latest,

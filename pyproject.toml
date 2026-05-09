@@ -26,6 +26,7 @@ classifiers = [
     "Topic :: Communications",
 ]
 dependencies = [
+    "packaging>=24",
     "Mastodon.py>=2.2.1",
     "tweak>=1.0.4",
     "pyperclip>=1.8",
