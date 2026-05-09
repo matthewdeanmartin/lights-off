@@ -168,7 +168,7 @@ class TweetGui(wx.Dialog):
 		self.menu = wx.Menu()
 		for i in globals.users:
 			if i.acct.lower().startswith(text.lower()) or i.display_name.lower().startswith(text.lower()):
-				self.create_menu_item(self.menu, i.display_name+" (@"+i.acct+")", lambda event, orig=text, text=i.acct: self.OnUser(event,orig,text))
+				self.create_menu_item(self.menu, utils.strip_display_name(i.display_name, i.acct)+" (@"+i.acct+")", lambda event, orig=text, text=i.acct: self.OnUser(event,orig,text))
 		self.PopupMenu(self.menu)
 
 	def Newline(self,event):

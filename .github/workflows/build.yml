@@ -26,7 +26,7 @@ jobs:
         run: pip install uv
 
       - name: Install Dependencies
-        run: uv sync --all-extras
+        run: uv sync --all-extras --python-preference only-system
 
       - name: Run backend tests
         run: make lint && make test

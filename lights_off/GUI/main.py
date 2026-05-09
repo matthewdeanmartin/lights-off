@@ -487,8 +487,9 @@ class MainGui(wx.Frame):
 			item=tl.statuses[tl.index]
 			if len(sound.get_media_urls(utils.find_urls_in_tweet(item))) > 0:
 				sound.play(globals.currentAccount,"media")
-		from lights_off.GUI.invisible import inv
-		inv.speak_item()
+		# if event is not None:
+		# 	from lights_off.GUI.invisible import inv
+		# 	inv.speak_item()
 
 	@_logged("Timeline / Refresh")
 	def onRefresh(self,event=None):
@@ -508,7 +509,10 @@ class MainGui(wx.Frame):
 
 	@_logged("Actions / View post")
 	def OnView(self,event=None):
-		viewer=view.ViewGui(globals.currentAccount,globals.currentAccount.currentTimeline.statuses[globals.currentAccount.currentTimeline.index])
+		tl=globals.currentAccount.currentTimeline
+		if not tl.statuses:
+			return
+		viewer=view.ViewGui(globals.currentAccount,tl.statuses[tl.index])
 		viewer.Show()
 
 	@_logged("Timeline / Load older posts")

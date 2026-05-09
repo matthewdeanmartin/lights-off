@@ -143,6 +143,8 @@ class timeline(object):
 		globals.get_timeline_settings(self.account.me.id,self.name).hide=self.hide
 		globals.save_timeline_settings()
 		main.window.refreshTimelines()
+		if not self.statuses:
+			self.load(speech=False)
 
 	def load(self,back=False,speech=False,items=[]):
 		if self.hide:

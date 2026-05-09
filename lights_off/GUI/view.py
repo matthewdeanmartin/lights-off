@@ -7,6 +7,22 @@ from lights_off import utils
 text_box_size=(600,250)
 small_text_box_size=(600,150)
 
+def _humanize(n):
+	import math
+	n = int(n or 0)
+	if n == 0:
+		return "0"
+	if n >= 1_000_000:
+		return f"{n/1_000_000:.1f}M"
+	if n >= 10_000:
+		return f"{n//1_000}K"
+	if n >= 1_000:
+		return f"{n/1_000:.1f}K"
+	if n >= 10:
+		magnitude = 10 ** (math.floor(math.log10(n)) - 1)
+		return str(round(n / magnitude) * magnitude)
+	return str(n)
+
 class ViewGui(wx.Dialog):
 
 	def __init__(self,account,status):
@@ -14,7 +30,7 @@ class ViewGui(wx.Dialog):
 		self.status=utils.ensure_attr_access(status)
 		self.tweet_text=utils.process_tweet(self.status,True)
 		self.type="post"
-		wx.Dialog.__init__(self, None, title="View post from "+status.account.display_name+" ("+status.account.acct+")", style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
+		wx.Dialog.__init__(self, None, title="View post from "+utils.strip_display_name(status.account.display_name, status.account.acct)+" ("+status.account.acct+")", style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
 		self.Bind(wx.EVT_CLOSE, self.OnClose)
 		self.panel = wx.Panel(self)
 		self.main_box = wx.BoxSizer(wx.VERTICAL)
@@ -37,14 +53,16 @@ class ViewGui(wx.Dialog):
 			extra += "Content warning: " + self.status.spoiler_text + "\r\n"
 		if self.status.media_attachments:
 			for idx, m in enumerate(self.status.media_attachments, 1):
-				extra += "Media "+str(idx)+"\r\nType: "+m.type+"\r\nURL: "+m.url+"\r\n"
+				extra += "Media "+str(idx)+": "+m.type+"\r\n"
 				if m.description:
 					extra += "Description: "+m.description+"\r\n"
+		posted=utils.parse_date(self.status.created_at)
+		if posted:
+			extra+="Posted: "+posted+"\r\n"
 		self.text2.SetValue(
 			extra +
-			"Posted: "+utils.parse_date(self.status.created_at)+"\r\n"+
-			"Favourited "+str(self.status.favourites_count)+" times\r\n"+
-			"Boosted "+str(self.status.reblogs_count)+" times."
+			"Favourited "+_humanize(self.status.favourites_count)+" times\r\n"+
+			"Boosted "+_humanize(self.status.reblogs_count)+" times."
 		)
 		if platform.system()=="Darwin":
 			self.text2.SetValue(self.text2.GetValue().replace("\r",""))
@@ -76,14 +94,15 @@ class ViewGui(wx.Dialog):
 		btn_grid.Add(self.like, 0, wx.EXPAND)
 
 		extra_users = utils.get_user_objects_in_tweet(self.account, self.status, True, True)
+		_name=utils.strip_display_name(self.status.account.display_name, self.status.account.acct)
 		if len(extra_users) > 0:
-			self.profile = wx.Button(self.panel, -1, "View &Profile of "+self.status.account.display_name+" and "+str(len(extra_users))+" more")
+			self.profile = wx.Button(self.panel, -1, "View &Profile of "+_name+" and "+str(len(extra_users))+" more")
 		else:
-			self.profile = wx.Button(self.panel, -1, "View &Profile of "+self.status.account.display_name)
+			self.profile = wx.Button(self.panel, -1, "View &Profile of "+_name)
 		self.profile.Bind(wx.EVT_BUTTON, self.OnProfile)
 		btn_grid.Add(self.profile, 0, wx.EXPAND)
 
-		self.message = wx.Button(self.panel, -1, "&Message "+self.status.account.display_name)
+		self.message = wx.Button(self.panel, -1, "&Message "+_name)
 		self.message.Bind(wx.EVT_BUTTON, self.OnMessage)
 		btn_grid.Add(self.message, 0, wx.EXPAND)
 
@@ -155,8 +174,8 @@ class UserViewGui(wx.Dialog):
 				extra+=", You follow"
 			note=getattr(i,"note","") or ""
 			if note:
-				extra+=", "+note[:80]
-			self.list.Insert(i.display_name+" (@"+i.acct+")"+extra,self.list.GetCount())
+				extra+=", "+utils.strip_bio(note)[:80]
+			self.list.Insert(utils.strip_display_name(i.display_name, i.acct)+" (@"+i.acct+")"+extra,self.list.GetCount())
 		self.index=0
 		if len(self.users)==0:
 			self.list.Show(False)
@@ -244,12 +263,12 @@ class UserViewGui(wx.Dialog):
 		if last_status:
 			extra+="\r\nLast posted: "+utils.parse_date(last_status)
 		info=(
-			"Display Name: "+user.display_name+"\r\n"+
+			"Display Name: "+utils.strip_display_name(user.display_name, user.acct)+"\r\n"+
 			"Account: @"+user.acct+"\r\n"+
-			"Bio: "+str(getattr(user,"note",""))+extra+"\r\n"+
-			"Followers: "+str(user.followers_count)+"\r\n"+
-			"Following: "+str(user.following_count)+"\r\n"+
-			"Posts: "+str(user.statuses_count)+"\r\n"+
+			"Bio: "+utils.strip_bio(getattr(user,"note",""))+extra+"\r\n"+
+			"Followers: "+_humanize(user.followers_count)+"\r\n"+
+			"Following: "+_humanize(user.following_count)+"\r\n"+
+			"Posts: "+_humanize(user.statuses_count)+"\r\n"+
 			"Created: "+utils.parse_date(user.created_at)+"\r\n"+
 			"Locked: "+str(getattr(user,"locked",False))+"\r\n"+
 			"Following: "+str(getattr(user,"following",False))

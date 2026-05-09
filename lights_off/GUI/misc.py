@@ -196,8 +196,9 @@ def user_timeline_user(account,username,focus=True):
 			account.prefs.user_timelines.append(username)
 		main.window.refreshTimelines()
 		if focus:
-			account.currentIndex=len(account.timelines)-1
-			main.window.list.SetSelection(len(account.timelines)-1)
+			last=main.window.list.GetCount()-1
+			account.currentIndex=last
+			main.window.list.SetSelection(last)
 			main.window.on_list_change(None)
 		return True
 
@@ -210,8 +211,9 @@ def search(account,q,focus=True):
 		account.prefs.search_timelines.append(q)
 	main.window.refreshTimelines()
 	if focus:
-		account.currentIndex=len(account.timelines)-1
-		main.window.list.SetSelection(len(account.timelines)-1)
+		last=main.window.list.GetCount()-1
+		account.currentIndex=last
+		main.window.list.SetSelection(last)
 		main.window.on_list_change(None)
 
 def user_search(account,q):
@@ -234,8 +236,9 @@ def list_timeline(account,n, q,focus=True):
 		account.prefs.list_timelines.append(q)
 	main.window.refreshTimelines()
 	if focus:
-		account.currentIndex=len(account.timelines)-1
-		main.window.list.SetSelection(len(account.timelines)-1)
+		last=main.window.list.GetCount()-1
+		account.currentIndex=last
+		main.window.list.SetSelection(last)
 		main.window.on_list_change(None)
 
 def next_in_thread(account):

@@ -32,7 +32,8 @@ class HiddenTimelinesGui(wx.Dialog):
 	def add_items(self):
 		for i in self.account.list_timelines(True):
 			self.list.Insert(i.name,self.list.GetCount())
-		self.list.SetSelection(0)
+		if self.list.GetCount() > 0:
+			self.list.SetSelection(0)
 
 	def on_list_change(self,event):
 		self.load.Enable(True)

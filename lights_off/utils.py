@@ -1,5 +1,6 @@
 import html
 from html.parser import HTMLParser
+import logging
 import platform
 import json
 import datetime
@@ -136,7 +137,7 @@ def template_to_string(s, template="", _shorten_acct=True):
 						f1=getattr(s,o)
 						val=getattr(f1,p)
 						if globals.prefs.demojify and ("name" in (o,p)):
-							val=demojify(str(val)) or getattr(f1,"acct","")
+							val=strip_display_name(str(val), getattr(f1,"acct",""))
 						if _shorten_acct and p=="acct":
 							val=shorten_acct(str(val))
 						template=template.replace("$"+t[1]+"$",str(val))
@@ -147,7 +148,7 @@ def template_to_string(s, template="", _shorten_acct=True):
 					try:
 						val=getattr(s,t[1])
 						if t[1]=="display_name" and globals.prefs.demojify:
-							val=demojify(str(val)) or getattr(s,"acct","")
+							val=strip_display_name(str(val), getattr(s,"acct",""))
 						if t[1]=="content" and globals.prefs.demojify_tweet:
 							val=demojify(str(val))
 						if t[1]=="created_at":
@@ -466,14 +467,17 @@ def alert(message, caption = "", parent=None):
 	dlg.ShowModal()
 	dlg.Destroy()
 
+_cfu_log = logging.getLogger("lights_off.cfu")
+
 def cfu(silent=True):
+	url="https://pypi.org/pypi/lights-off/json"
+	_cfu_log.info("checking for updates at %s (current version: %s)", url, application.version)
 	try:
-		data=json.loads(requests.get(
-			"https://pypi.org/pypi/lights-off/json",
-			timeout=5,
-		).content.decode())
+		data=json.loads(requests.get(url, timeout=5).content.decode())
 		latest=data["info"]["version"]
+		_cfu_log.info("latest version on PyPI: %s", latest)
 		if application.version<latest:
+			_cfu_log.info("update available: %s -> %s", application.version, latest)
 			ud=question(
 				"Update available: "+latest,
 				"There is an update available. Your version: "+application.version+
@@ -483,15 +487,33 @@ def cfu(silent=True):
 			if ud==1:
 				webbrowser.open("https://pypi.org/project/lights-off/")
 		else:
+			_cfu_log.info("already up to date")
 			if not silent:
 				alert("No updates available! The latest version is "+latest,"No update available")
-	except Exception:
-		pass
+	except Exception as e:
+		_cfu_log.warning("update check failed: %s", e)
 
 def demojify(text):
-	text=text.encode("ascii","ignore")
-	text=text.decode()
-	return text
+	import unicodedata
+	# Strip Symbol-other (So) chars — the Unicode category that covers emoji.
+	# Keeps letters (including accented), numbers, punctuation, and separators.
+	return "".join(ch for ch in text if unicodedata.category(ch) != "So").strip()
+
+
+def strip_bio(raw):
+	"""HTML-decode and strip tags from a Mastodon bio/note field."""
+	if not raw:
+		return ""
+	return strip_html(html.unescape(raw))
+
+
+def strip_display_name(display_name, acct_fallback=""):
+	"""Strip emojis from display_name, but keep it if it's entirely emojis."""
+	stripped = demojify(display_name)
+	if stripped:
+		return stripped
+	# Name was all emojis — keep original so the user isn't nameless
+	return display_name or acct_fallback
 
 def handle_error(error, name="Unknown"):
 	msg=str(error)

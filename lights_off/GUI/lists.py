@@ -7,7 +7,8 @@ class ListsGui(wx.Dialog):
 		self.account=account
 		self.add=add
 		self.user=user
-		self.lists=self.account.api.lists()
+		from lights_off.utils import ensure_attr_access
+		self.lists=[ensure_attr_access(i) for i in self.account.api.lists()]
 		wx.Dialog.__init__(self, None, title="Lists", style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
 		self.Bind(wx.EVT_CLOSE, self.OnClose)
 		self.panel = wx.Panel(self)
@@ -65,9 +66,6 @@ class ListsGui(wx.Dialog):
 
 	def add_items(self):
 		for i in self.lists:
-			if isinstance(i, dict):
-				from mastodon.types_base import AttribAccessDict
-				i = AttribAccessDict(**i)
 			self.list.Insert(i.title, self.list.GetCount())
 		if len(self.lists)>0:
 			self.list.SetSelection(0)
