@@ -1,6 +1,8 @@
 name: Build and Test
 
-on: [ push ]
+# Takes 20 minutes to build on linux! No wheels?!
+on:
+  workflow_dispatch:
 
 permissions:
   contents: read
