@@ -28,31 +28,7 @@ On first launch you will be prompted for your Mastodon instance URL (e.g.
 
 ## Documentation
 
-Full documentation is at <https://lights-off.readthedocs.io/>.
-
-- [Installation](https://lights-off.readthedocs.io/installation/overview/)
-- [Screen reader setup](https://lights-off.readthedocs.io/screen-readers/overview/)
-- [Keyboard reference](https://lights-off.readthedocs.io/getting-started/keyboard-reference/)
-- [Troubleshooting](https://lights-off.readthedocs.io/reference/troubleshooting/)
-
-## Development
-
-```bash
-git clone https://github.com/matthewdeanmartin/lights-off
-cd lights-off
-uv sync
-uv run lights-off
-```
-
-Run tests across all supported Python versions:
-
-```
-tox
-```
-
-## Contributing
-
-Pull requests welcome. For large feature additions, open an issue first.
+Full documentation is at [readthedocs](https://lights-off.readthedocs.io/en/latest/).
 
 ## Licenses
 
