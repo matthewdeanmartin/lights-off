@@ -15,7 +15,7 @@ users can browse, post, and manage their account without touching the mouse.
 pipx install lights-off
 ```
 
-Requires Python 3.12+. See the [installation docs](https://lights-off.readthedocs.io/installation/overview/) for platform-specific steps.
+Requires Python 3.12+. See the [installation docs](https://lights-off.readthedocs.io/en/latest/) for platform-specific steps.
 
 ## Run
 
