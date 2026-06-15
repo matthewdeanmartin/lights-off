@@ -75,7 +75,9 @@ include = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+# tests/ holds the unit suite (and live-API tests, marked `live`/`live_write`).
+# test_integration/ drives MastodonAccount against the mastodon_mock HTTP server.
+testpaths = ["tests", "test_integration"]
 
 [tool.ruff]
 line-length = 120
@@ -90,6 +92,12 @@ dev = [
     "troml-dev-status>=0.6.0",
     "dont-be-lazy>=0.1.2",
     "pydoc-fork>=3.0.0",
+    # Mock Mastodon server (published on PyPI) — lets test_integration/ drive
+    # MastodonAccount's real Mastodon.py wrapper methods against a stateful local
+    # HTTP server instead of a live instance. The [test] extra adds the
+    # zero-boilerplate fixtures / MockServer helper. Requires Python >=3.13; the
+    # integration suite self-skips otherwise.
+    "mastodon_mock[test]; python_version >= '3.13'",
 ]
 
 [tool.uv]
