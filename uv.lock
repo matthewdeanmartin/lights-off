@@ -10,6 +10,9 @@ resolution-markers = [
     "python_full_version < '3.13' and sys_platform != 'win32'",
 ]
 
+[options]
+exclude-newer = "2026-07-02T13:06:30Z"
+
 [[package]]
 name = "accessible-output2"
 version = "0.17"
