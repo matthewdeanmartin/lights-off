@@ -2,8 +2,10 @@ version = 1
 revision = 3
 requires-python = ">=3.12"
 resolution-markers = [
-    "python_full_version >= '3.14' and sys_platform == 'win32'",
-    "python_full_version >= '3.14' and sys_platform != 'win32'",
+    "python_full_version >= '3.15' and sys_platform == 'win32'",
+    "python_full_version == '3.14.*' and sys_platform == 'win32'",
+    "python_full_version >= '3.15' and sys_platform != 'win32'",
+    "python_full_version == '3.14.*' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform != 'win32'",
     "python_full_version < '3.13' and sys_platform == 'win32'",
@@ -924,7 +926,7 @@ wheels = [
 
 [[package]]
 name = "keepachangelog-manager-fork"
-version = "6.6.0"
+version = "6.8.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "inquirer" },
@@ -934,15 +936,14 @@ dependencies = [
     { name = "semantic-version" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9e/f5/6461361cb54028a5aa6a35cdc61f492b6f1bc2c9b0e36b70f04c78c07b50/keepachangelog_manager_fork-6.6.0.tar.gz", hash = "sha256:4d1c05dcb2558847ad3a102e85df2fc51e1ddaba3652b063a1e1fff4530ae0cf", size = 1336568, upload-time = "2026-07-05T14:17:19.521Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/47/75/dfadeb2a8e43701165030b414ebdabb800e2952d220f98e6d1c574077d51/keepachangelog_manager_fork-6.8.0.tar.gz", hash = "sha256:ebc90046ff374f6b9e2bebbc1e505910b40d4d2637677e787a55ab6fc9ad27a3", size = 1414432, upload-time = "2026-09-09T18:11:25.024Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6a/17/f9817db0c46851fe109897ac9d9f64b6f74a68174db87fbc3d23592067ba/keepachangelog_manager_fork-6.6.0-py3-none-any.whl", hash = "sha256:a4152c4f9a8f0d8698a580ff1680b7a60265d60fff299b482cc3c8d1220cb7fd", size = 191399, upload-time = "2026-07-05T14:17:17.911Z" },
+    { url = "https://files.pythonhosted.org/packages/1e/13/d3d17ac45bd68d31e85ccace9f7d8b6f3610f81ee7cfb902b95f1c0f49dc/keepachangelog_manager_fork-6.8.0-py3-none-any.whl", hash = "sha256:0fdc1dd648308fb46c225b92ff92738d8b6581188a2564aecc3dbca4c635c550", size = 193172, upload-time = "2026-09-09T18:11:23.067Z" },
 ]
 
 [package.optional-dependencies]
-all = [
+fast = [
     { name = "google-re2" },
-    { name = "mdformat" },
     { name = "orjson" },
 ]
 
@@ -991,7 +992,9 @@ dependencies = [
 
 [package.optional-dependencies]
 dev = [
-    { name = "keepachangelog-manager-fork", extra = ["all"] },
+    { name = "keepachangelog-manager-fork" },
+    { name = "keepachangelog-manager-fork", extra = ["fast"], marker = "python_full_version < '3.15'" },
+    { name = "keepachangelog-manager-fork", marker = "python_full_version >= '3.15'" },
     { name = "pytest" },
     { name = "python-dotenv" },
     { name = "ruff" },
@@ -1009,7 +1012,8 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "accessible-output2", marker = "sys_platform == 'darwin'", specifier = ">=0.17" },
-    { name = "keepachangelog-manager-fork", extras = ["all"], marker = "extra == 'dev'", specifier = ">=6.6.0,<7" },
+    { name = "keepachangelog-manager-fork", extras = ["fast"], marker = "python_full_version < '3.15' and extra == 'dev'", specifier = ">=6.8.0,<7" },
+    { name = "keepachangelog-manager-fork", extras = ["stdlib"], marker = "python_full_version >= '3.15' and extra == 'dev'", specifier = ">=6.8.0,<7" },
     { name = "mastodon-py", specifier = ">=2.2.1" },
     { name = "packaging", specifier = ">=24" },
     { name = "pyperclip", specifier = ">=1.8" },
@@ -1196,18 +1200,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/cf/bf/91465842e820ac8c2c90fda9c7875ed40d3abb934e072d76cbdb4462027b/mastodon_py-2.2.2.tar.gz", hash = "sha256:07131f6ac8820462de25b7641622b01b22f2b9ab6b3e7252749442f51fd30778", size = 11781574, upload-time = "2026-08-03T11:07:03.623Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/2f/ce/970923430cf0986470964445ccfde77f79a53dec34bd89927ccec49d1c63/mastodon_py-2.2.2-py3-none-any.whl", hash = "sha256:d18a107517836c783c93c9f2e713b4fad909fcd017f5036d2ce93d3dfd781904", size = 131248, upload-time = "2026-08-03T11:07:01.395Z" },
-]
-
-[[package]]
-name = "mdformat"
-version = "1.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "markdown-it-py" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/3f/05/32b5e14b192b0a8a309f32232c580aefedd9d06017cb8fe8fce34bec654c/mdformat-1.0.0.tar.gz", hash = "sha256:4954045fcae797c29f86d4ad879e43bb151fa55dbaf74ac6eaeacf1d45bb3928", size = 56953, upload-time = "2025-10-16T12:05:03.695Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/54/9a/8fe71b95985ca7a4001effbcc58e5a07a1f2a2884203f74dcf48a3b08315/mdformat-1.0.0-py3-none-any.whl", hash = "sha256:bca015d65a1d063a02e885a91daee303057bc7829c2cd37b2075a50dbb65944b", size = 53288, upload-time = "2025-10-16T12:05:02.607Z" },
 ]
 
 [[package]]
