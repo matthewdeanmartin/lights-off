@@ -38,3 +38,7 @@ Full documentation is at [readthedocs](https://lights-off.readthedocs.io/en/late
 - GPL-2.0-only. `Tolk.py` is LGPLv3 (copyright Davy Kager).
 - .ogg soundfiles - unknown license
 - keyboard_handler - vendorized, MIT, copyright Christopher Toth
+
+## Python 3.15 wheels-only verification — 2026-10-04
+
+Windows Python 3.15.0rc3 remains blocked by wxPython wheel availability, even with prereleases allowed. Python 3.14 installs runtime dependencies from wheels and passes 139 mocked unit tests, with 24 live tests deselected. Those tests stub GUI/audio services; they do not certify the real desktop UI. No dependency was compiled and no live Mastodon account was changed.
