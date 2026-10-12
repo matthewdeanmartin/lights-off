@@ -5,6 +5,7 @@ Loads credentials from .env (bash export format) and builds a live
 Mastodon API client.  Tests that hit the network are marked `live` and
 skipped automatically when credentials are absent.
 """
+
 import os
 import re
 import sys
@@ -25,7 +26,7 @@ def _load_env(path=".env"):
         with open(path) as f:
             for line in f:
                 line = line.strip()
-                m = re.match(r'^export\s+([A-Z_][A-Z0-9_]*)=(.*)$', line)
+                m = re.match(r"^export\s+([A-Z_][A-Z0-9_]*)=(.*)$", line)
                 if m:
                     env[m.group(1)] = m.group(2).strip()
     except FileNotFoundError:
@@ -40,9 +41,7 @@ for k, v in _env.items():
     os.environ.setdefault(k, v)
 
 _has_creds = all(
-    _env.get(k)
-    for k in ("MASTODON_BASE_URL", "MASTODON_CLIENT_ID",
-              "MASTODON_CLIENT_SECRET", "MASTODON_ACCESS_TOKEN")
+    _env.get(k) for k in ("MASTODON_BASE_URL", "MASTODON_CLIENT_ID", "MASTODON_CLIENT_SECRET", "MASTODON_ACCESS_TOKEN")
 )
 
 

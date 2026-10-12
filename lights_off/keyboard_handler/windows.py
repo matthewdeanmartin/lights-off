@@ -16,9 +16,7 @@ class WindowsKeyboardHandler(KeyboardHandler):
             elif i.startswith("MOD_"):
                 key = i[4:].lower()
                 self.replacement_mods[key] = getattr(win32con, i)
-        self.replacement_keys.update(
-            dict(pageup=win32con.VK_PRIOR, pagedown=win32con.VK_NEXT)
-        )
+        self.replacement_keys.update(dict(pageup=win32con.VK_PRIOR, pagedown=win32con.VK_NEXT))
 
     def parse_key(self, keystroke, separator="+"):
         keystroke = str(keystroke)  # We don't want unicode

@@ -1,7 +1,7 @@
 """
 Tests that verify each identity in .env can authenticate independently.
 """
-import os
+
 import re
 import pytest
 from mastodon import Mastodon
@@ -16,7 +16,7 @@ def _load_env(path=".env"):
         with open(path) as f:
             for line in f:
                 line = line.strip()
-                m = re.match(r'^export\s+([A-Z_][A-Z0-9_]*)=(.*)$', line)
+                m = re.match(r"^export\s+([A-Z_][A-Z0-9_]*)=(.*)$", line)
                 if m:
                     env[m.group(1)] = m.group(2).strip()
     except FileNotFoundError:
@@ -28,7 +28,7 @@ def _identities_from_env(env):
     """Return list of (name, base_url, client_id, client_secret, access_token)."""
     names = set()
     for k in env:
-        m = re.match(r'^MASTODON_ID_([A-Z0-9]+)_BASE_URL$', k)
+        m = re.match(r"^MASTODON_ID_([A-Z0-9]+)_BASE_URL$", k)
         if m:
             names.add(m.group(1))
     identities = []

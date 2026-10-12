@@ -19,9 +19,7 @@ class KeyboardHandler(object):
 
     def register_key(self, key, function):
         if key in self.active_keys:
-            raise KeyboardHandlerError(
-                "Key %s is already registered to a function" % key
-            )
+            raise KeyboardHandlerError("Key {} is already registered to a function".format(key))
         if not callable(function):
             raise TypeError("Must provide a callable to be invoked upon keypress")
         self.active_keys[key] = function
@@ -29,11 +27,9 @@ class KeyboardHandler(object):
     def unregister_key(self, key, function):
         try:
             if self.active_keys[key] != function:
-                raise KeyboardHandlerError(
-                    "key %s is not registered to that function" % key
-                )
+                raise KeyboardHandlerError("key {} is not registered to that function".format(key))
         except KeyError:
-            raise KeyboardHandlerError("Key %s not currently registered" % key)
+            raise KeyboardHandlerError("Key {} not currently registered".format(key))
         del self.active_keys[key]
 
     def unregister_all_keys(self):
@@ -41,11 +37,7 @@ class KeyboardHandler(object):
             self.unregister_key(key, self.active_keys[key])
 
     def handle_key(self, key):
-        if (
-            self.repeat_rate
-            and key == self._last_key
-            and time.time() - self._last_keypress_time < self.repeat_rate
-        ):
+        if self.repeat_rate and key == self._last_key and time.time() - self._last_keypress_time < self.repeat_rate:
             return
         try:
             function = self.active_keys[key]
@@ -88,10 +80,7 @@ class KeyboardHandler(object):
         for i in keymap:
             answer = ""
             new = self.standardize_key(keymap[i])
-            for (c, j) in enumerate(new):
-                if c < len(new) - 1:
-                    answer = "%s%s+" % (answer, j)
-                else:
-                    answer = "%s%s" % (answer, j)
+            for c, j in enumerate(new):
+                answer = "{}{}+".format(answer, j) if c < len(new) - 1 else "{}{}".format(answer, j)
             full[i] = answer
         return full

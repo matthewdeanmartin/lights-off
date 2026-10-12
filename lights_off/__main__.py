@@ -8,15 +8,16 @@ import os
 import platform
 import shutil
 import sys
+import contextlib
 
 # ---------------------------------------------------------------------------
 # Logging — stdlib, to stdout, on by default.
 # ---------------------------------------------------------------------------
 
 logging.basicConfig(
-	level=logging.INFO,
-	format="%(asctime)s %(levelname)s %(name)s %(message)s",
-	stream=sys.stdout,
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+    stream=sys.stdout,
 )
 
 log = logging.getLogger("lights_off")
@@ -29,11 +30,11 @@ log.info("starting lights-off")
 # ---------------------------------------------------------------------------
 
 if os.environ.get("LIGHTS_OFF_REDIRECT_STDERR") == "1" and platform.system() != "Darwin":
-	try:
-		sys.stderr = open("errors.log", "a")
-		log.info("stderr redirected to errors.log (legacy mode)")
-	except Exception as e:
-		log.warning("could not redirect stderr: %s", e)
+    try:
+        sys.stderr = open("errors.log", "a")
+        log.info("stderr redirected to errors.log (legacy mode)")
+    except Exception as e:
+        log.warning("could not redirect stderr: %s", e)
 
 
 # ---------------------------------------------------------------------------
@@ -43,35 +44,35 @@ if os.environ.get("LIGHTS_OFF_REDIRECT_STDERR") == "1" and platform.system() != 
 sys.dont_write_bytecode = True
 
 if platform.system() == "Windows":
-	import tempfile
-	gen_py = os.path.join(tempfile.gettempdir(), "gen_py")
-	if os.path.exists(gen_py):
-		try:
-			shutil.rmtree(gen_py)
-		except Exception:
-			pass
+    import tempfile
+
+    gen_py = os.path.join(tempfile.gettempdir(), "gen_py")
+    if os.path.exists(gen_py):
+        with contextlib.suppress(Exception):
+            shutil.rmtree(gen_py)
+
 
 def main():
-	import wx
+    import wx
 
-	app = wx.App(redirect=False)
+    app = wx.App(redirect=False)
 
-	import lights_off.speak as speak
-	from lights_off.GUI import main as main_gui
-	import lights_off.globals as globals_mod
+    import lights_off.speak as speak
+    from lights_off.GUI import main as main_gui
+    import lights_off.globals as globals_mod
 
-	globals_mod.load()
-	log.info("config/state directory: %s", globals_mod.confpath)
+    globals_mod.load()
+    log.info("config/state directory: %s", globals_mod.confpath)
 
-	if globals_mod.prefs.window_shown:
-		main_gui.window.Show()
-	else:
-		speak.speak("Welcome to lights-off! Main window hidden.")
+    if globals_mod.prefs.window_shown:
+        main_gui.window.Show()
+    else:
+        speak.speak("Welcome to lights-off! Main window hidden.")
 
-	import lights_off.utils  # noqa: F401  (side-effects: registers handlers)
+    import lights_off.utils  # noqa: F401  (side-effects: registers handlers)
 
-	app.MainLoop()
+    app.MainLoop()
 
 
 if __name__ == "__main__":
-	main()
+    main()

@@ -9,7 +9,7 @@ from . import key_constants
 
 logger = logging.getLogger("keyboard_handler")
 
-__all__ = ["WXKeyboardHandler", "WXControlKeyboardHandler"]
+__all__ = ["WXControlKeyboardHandler", "WXKeyboardHandler"]
 
 
 def call_after(func):
@@ -50,9 +50,7 @@ class BaseWXKeyboardHandler(KeyboardHandler):
         elif len(key) == 1:
             result = ord(key.upper())
         if result is None:
-            raise KeyboardHandlerError(
-                "Could not translate key %r into a valid keycode." % key
-            )
+            raise KeyboardHandlerError("Could not translate key {!r} into a valid keycode.".format(key))
         return result
 
 
@@ -72,9 +70,7 @@ class WXKeyboardHandler(BaseWXKeyboardHandler):
         res = self.parent.RegisterHotKey(key_id, *parsed)
         if not res:
             logger.warn("Failed to register hotkey: %s for function %r", key, function)
-        self.parent.Bind(
-            wx.EVT_HOTKEY, lambda evt: self.process_key(evt, key_id), id=key_id
-        )
+        self.parent.Bind(wx.EVT_HOTKEY, lambda evt: self.process_key(evt, key_id), id=key_id)
         self.key_ids[key] = key_id
         logger.debug("Registered hotkey: %s for function %r", key, function)
         return res
@@ -130,9 +126,6 @@ class WXControlKeyboardHandler(wx.StaticText, KeyboardHandler):
             if mod:
                 modifiers += ch
         if keyname is None:
-            if 27 < keycode < 256:
-                keyname = chr(keycode).lower()
-            else:
-                keyname = "(%s)unknown" % keycode
+            keyname = chr(keycode).lower() if 27 < keycode < 256 else "({})unknown".format(keycode)
         key = modifiers + keyname
         self.handle_key(key)

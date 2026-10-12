@@ -1,21 +1,20 @@
 ###
- #  Product:        Tolk
- #  File:           Tolk.py
- #  Description:    Python wrapper module.
- #  Copyright:      (c) 2014, Davy Kager <mail@davykager.nl>
- #  License:        LGPLv3
- ##
+#  Product:        Tolk
+#  File:           Tolk.py
+#  Description:    Python wrapper module.
+#  Copyright:      (c) 2014, Davy Kager <mail@davykager.nl>
+#  License:        LGPLv3
+##
 
 from ctypes import cdll, CFUNCTYPE, c_bool, c_wchar_p
 import os
-import sys
 
 # Register the package directory so Windows can find Tolk.dll and its
 # companion DLLs (SAAPI64.dll, nvdaControllerClient64.dll) regardless of CWD.
 from importlib.resources import files as _pkg_files
+
 _pkg_dir = str(_pkg_files("lights_off").joinpath(""))
-if sys.version_info >= (3, 8):
-	os.add_dll_directory(_pkg_dir)
+os.add_dll_directory(_pkg_dir)
 
 _tolk = cdll.LoadLibrary(os.path.join(_pkg_dir, "Tolk.dll"))
 
@@ -29,11 +28,11 @@ _proto_unload = CFUNCTYPE(None)
 unload = _proto_unload(("Tolk_Unload", _tolk))
 
 _proto_try_sapi = CFUNCTYPE(None, c_bool)
-_param_try_sapi = (1, "try_sapi"),
+_param_try_sapi = ((1, "try_sapi"),)
 try_sapi = _proto_try_sapi(("Tolk_TrySAPI", _tolk), _param_try_sapi)
 
 _proto_prefer_sapi = CFUNCTYPE(None, c_bool)
-_param_prefer_sapi = (1, "prefer_sapi"),
+_param_prefer_sapi = ((1, "prefer_sapi"),)
 prefer_sapi = _proto_prefer_sapi(("Tolk_PreferSAPI", _tolk), _param_prefer_sapi)
 
 _proto_detect_screen_reader = CFUNCTYPE(c_wchar_p)
@@ -54,7 +53,7 @@ _param_speak = (1, "str"), (1, "interrupt", False)
 speak = _proto_speak(("Tolk_Speak", _tolk), _param_speak)
 
 _proto_braille = CFUNCTYPE(c_bool, c_wchar_p)
-_param_braille = (1, "str"),
+_param_braille = ((1, "str"),)
 braille = _proto_braille(("Tolk_Braille", _tolk), _param_braille)
 
 _proto_is_speaking = CFUNCTYPE(c_bool)

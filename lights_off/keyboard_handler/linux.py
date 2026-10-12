@@ -6,7 +6,7 @@ import pyatspi
 
 def parse(s):
     """parse a string like control+f into (modifier, key).
-Unknown modifiers will return ValueError."""
+    Unknown modifiers will return ValueError."""
     m = 0
     lst = s.split("+")
     if not len(lst):
@@ -24,7 +24,7 @@ Unknown modifiers will return ValueError."""
             lst.remove(item)
     # end if
     if len(lst) > 1:  # more than one key, parse error
-        raise ValueError("unknown modifier %s" % lst[0])
+        raise ValueError("unknown modifier {}".format(lst[0]))
     return (m, lst[0].lower())
 
 
@@ -59,8 +59,8 @@ class LinuxKeyboardHandler(KeyboardHandler):
 
     def register_key(self, key, function):
         """key will be a string, such as control+shift+f.
-We need to convert that, using parse_key,
-into modifier and key to put into our dictionary."""
+        We need to convert that, using parse_key,
+        into modifier and key to put into our dictionary."""
         # register key so we know if we have it on event receive.
         t = parse(key)
         keys[t] = function

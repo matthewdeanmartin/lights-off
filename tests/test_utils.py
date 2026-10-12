@@ -1,15 +1,16 @@
 """
 Unit tests for utils.py — no GUI, no network, no Mastodon API.
 """
+
 import sys
 import types
 import unittest.mock as mock
-import pytest
 
 
 # ---------------------------------------------------------------------------
 # Minimal stubs so utils.py can be imported without wx / sound_lib / speak
 # ---------------------------------------------------------------------------
+
 
 def _stub_module(name, **attrs):
     m = types.ModuleType(name)
@@ -33,18 +34,24 @@ _stub_module("keyboard_handler.wx_handler")
 
 # Stub tweak so globals.py can be imported
 tweak_mod = _stub_module("tweak")
+
+
 class _FakeConfig:
     def __init__(self, *a, **kw):
         self._d = {}
         self.user_config_dir = "/tmp/lights-off-test"
+
     def get(self, key, default=None):
         return self._d.get(key, default)
+
     def __setattr__(self, k, v):
-        if k.startswith('_'):
+        if k.startswith("_"):
             object.__setattr__(self, k, v)
         else:
             self._d[k] = v
             object.__setattr__(self, k, v)
+
+
 tweak_mod.Config = _FakeConfig
 
 # Stub GUI modules. `lights_off` itself is the real package on disk; we only
@@ -62,7 +69,8 @@ app_mod.name = "lights-off"
 app_mod.version = "0.1"
 app_mod.shortname = "lights-off"
 
-from lights_off import globals as g
+from lights_off import globals as g  # noqa: E402
+
 g.prefs = _FakeConfig()
 g.prefs.tweetTemplate = "$account.acct$: $content$ $created_at$"
 g.prefs.retweetTemplate = "Boosting $account.display_name$ ($account.acct$): $content$"
@@ -77,25 +85,29 @@ g.unknown_users = []
 g.currentAccount = None
 g.accounts = []
 
-from lights_off import utils
+from lights_off import utils  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
 # Helpers to build minimal Mastodon-like status objects
 # ---------------------------------------------------------------------------
 
+
 class AttrDict(dict):
     """dict that allows attribute access — mimics Mastodon.py AttribAccessDict."""
+
     def __getattr__(self, name):
         try:
             return self[name]
         except KeyError:
             raise AttributeError(name)
+
     def __setattr__(self, name, value):
         self[name] = value
 
 
 _next_id = iter(range(1, 10000))
+
 
 def make_account(acct="user@mastodon.social", display_name="Test User", id=None):
     if id is None:
@@ -103,11 +115,19 @@ def make_account(acct="user@mastodon.social", display_name="Test User", id=None)
     return AttrDict(acct=acct, display_name=display_name, id=id, note="bio")
 
 
-def make_status(content="<p>Hello world</p>", acct="user@mastodon.social",
-                reblog=None, spoiler_text="", in_reply_to_id=None,
-                media_attachments=None, id=42, url="https://mastodon.social/@user/42",
-                mentions=None):
+def make_status(
+    content="<p>Hello world</p>",
+    acct="user@mastodon.social",
+    reblog=None,
+    spoiler_text="",
+    in_reply_to_id=None,
+    media_attachments=None,
+    id=42,
+    url="https://mastodon.social/@user/42",
+    mentions=None,
+):
     import datetime
+
     return AttrDict(
         id=id,
         content=content,
@@ -130,6 +150,7 @@ def make_status(content="<p>Hello world</p>", acct="user@mastodon.social",
 # strip_html
 # ---------------------------------------------------------------------------
 
+
 class TestStripHtml:
     def test_plain_paragraph(self):
         assert utils.strip_html("<p>Hello</p>") == "Hello"
@@ -142,6 +163,7 @@ class TestStripHtml:
 
     def test_entities_decoded(self):
         import html
+
         raw = html.unescape("<p>AT&amp;T</p>")
         assert utils.strip_html(raw) == "AT&T"
 
@@ -156,6 +178,7 @@ class TestStripHtml:
 # ---------------------------------------------------------------------------
 # process_tweet
 # ---------------------------------------------------------------------------
+
 
 class TestProcessTweet:
     def test_strips_html(self):
@@ -192,6 +215,7 @@ class TestProcessTweet:
 # find_urls_in_text
 # ---------------------------------------------------------------------------
 
+
 class TestFindUrls:
     def test_http_url(self):
         urls = utils.find_urls_in_text("check https://example.com out")
@@ -209,6 +233,7 @@ class TestFindUrls:
 # ---------------------------------------------------------------------------
 # isDuplicate
 # ---------------------------------------------------------------------------
+
 
 class TestIsDuplicate:
     def test_found(self):
@@ -230,6 +255,7 @@ class TestIsDuplicate:
 # ---------------------------------------------------------------------------
 # add_users
 # ---------------------------------------------------------------------------
+
 
 class TestAddUsers:
     def setup_method(self):
@@ -261,9 +287,11 @@ class TestAddUsers:
 # parse_date
 # ---------------------------------------------------------------------------
 
+
 class TestParseDate:
     def test_returns_string(self):
         import datetime
+
         d = datetime.datetime(2024, 6, 15, 14, 30, 0)
         result = utils.parse_date(d)
         assert isinstance(result, str)
@@ -271,6 +299,7 @@ class TestParseDate:
 
     def test_today_omits_date(self):
         import datetime
+
         now = datetime.datetime.now()
         result = utils.parse_date(now)
         # today's date should not be in the string (only time shown)
@@ -281,6 +310,7 @@ class TestParseDate:
 # ---------------------------------------------------------------------------
 # demojify
 # ---------------------------------------------------------------------------
+
 
 class TestDemojify:
     def test_strips_emoji(self):
@@ -305,6 +335,7 @@ class TestDemojify:
 # shorten_acct
 # ---------------------------------------------------------------------------
 
+
 class TestShortenAcct:
     def test_with_instance(self):
         assert utils.shorten_acct("alice@mastodon.social") == "alice"
@@ -326,6 +357,7 @@ class TestShortenAcct:
 # ---------------------------------------------------------------------------
 # strip_html — anchor handling
 # ---------------------------------------------------------------------------
+
 
 class TestStripHtmlAnchors:
     def test_shortened_url_uses_display_text(self):
@@ -353,6 +385,7 @@ class TestStripHtmlAnchors:
 # ---------------------------------------------------------------------------
 # template_to_string
 # ---------------------------------------------------------------------------
+
 
 class TestTemplateToString:
     def setup_method(self):
@@ -405,6 +438,7 @@ class TestTemplateToString:
 
     def test_created_at_formatted(self):
         import datetime
+
         s = make_status()
         s.content = "x"
         s.created_at = datetime.datetime(2020, 3, 15, 9, 0, 0)
@@ -422,6 +456,7 @@ class TestTemplateToString:
 # ---------------------------------------------------------------------------
 # find_urls_in_tweet
 # ---------------------------------------------------------------------------
+
 
 class TestFindUrlsInTweet:
     def test_extracts_from_content(self):
@@ -452,6 +487,7 @@ class TestFindUrlsInTweet:
 # process_message
 # ---------------------------------------------------------------------------
 
+
 class TestProcessMessage:
     def test_plain_status(self):
         s = make_status("<p>hello dm</p>", acct="sender@example.com")
@@ -478,6 +514,7 @@ class TestProcessMessage:
 # ---------------------------------------------------------------------------
 # notification_to_status
 # ---------------------------------------------------------------------------
+
 
 class TestNotificationToStatus:
     def _make_notif(self, ntype, acct="actor@social.example", status=None):
@@ -534,6 +571,7 @@ class TestNotificationToStatus:
 # isDuplicate — additional edge cases
 # ---------------------------------------------------------------------------
 
+
 class TestIsDuplicateExtra:
     def test_large_list_no_match(self):
         statuses = [make_status(id=i) for i in range(50)]
@@ -549,6 +587,7 @@ class TestIsDuplicateExtra:
 # ---------------------------------------------------------------------------
 # dict_obj / dict2obj / ensure_attr_access
 # ---------------------------------------------------------------------------
+
 
 class TestDictObj:
     def test_attr_access(self):
@@ -582,6 +621,7 @@ class TestDictObj:
 # _nget
 # ---------------------------------------------------------------------------
 
+
 class TestNget:
     def test_obj_attr(self):
         obj = AttrDict(foo="bar")
@@ -600,6 +640,7 @@ class TestNget:
 # ---------------------------------------------------------------------------
 # add_users — edge cases
 # ---------------------------------------------------------------------------
+
 
 class TestAddUsersExtra:
     def setup_method(self):
@@ -624,6 +665,7 @@ class TestAddUsersExtra:
 # ---------------------------------------------------------------------------
 # lookup_user / lookup_user_name
 # ---------------------------------------------------------------------------
+
 
 class TestLookupUser:
     def setup_method(self):
@@ -662,6 +704,7 @@ class TestLookupUser:
 # find_status / find_reply
 # ---------------------------------------------------------------------------
 
+
 class TestFindStatus:
     def _make_tl(self, ids):
         tl = AttrDict(statuses=[make_status(id=i) for i in ids])
@@ -690,6 +733,7 @@ class TestFindStatus:
 # handle_error
 # ---------------------------------------------------------------------------
 
+
 class TestHandleError:
     def setup_method(self):
         g.errors = []
@@ -714,9 +758,11 @@ class TestHandleError:
 # parse_date — additional
 # ---------------------------------------------------------------------------
 
+
 class TestParseDateExtra:
     def test_non_today_includes_date(self):
         import datetime
+
         # Use a date far in the past so any timezone offset cannot make it "today"
         d = datetime.datetime(1990, 7, 4, 12, 0, 0)
         result = utils.parse_date(d)
@@ -726,6 +772,7 @@ class TestParseDateExtra:
     def test_24hour_format(self):
         import datetime
         import time
+
         g.prefs.use24HourTime = True
         # Build a datetime whose hour survives tz adjustment into a recognisable 2-digit hour
         # parse_date subtracts time.timezone (seconds west of UTC), so we add it back
@@ -744,6 +791,7 @@ class TestParseDateExtra:
 # ---------------------------------------------------------------------------
 # process_tweet — reblog content propagation
 # ---------------------------------------------------------------------------
+
 
 class TestProcessTweetReblog:
     def test_reblog_content_uses_inner_account(self):
@@ -765,6 +813,7 @@ class TestProcessTweetReblog:
 # message_template_to_string (stub — always "")
 # ---------------------------------------------------------------------------
 
+
 class TestMessageTemplateToString:
     def test_always_returns_empty(self):
         assert utils.message_template_to_string(make_status()) == ""
@@ -774,13 +823,14 @@ class TestMessageTemplateToString:
 # dict_match / class_match
 # ---------------------------------------------------------------------------
 
+
 class TestDictMatch:
     def test_copies_missing_keys(self):
         d1 = {"a": 1}
         d2 = {"a": 99, "b": 2}
         result = utils.dict_match(d1, d2)
-        assert result["a"] == 1   # existing key not overwritten
-        assert result["b"] == 2   # missing key filled in
+        assert result["a"] == 1  # existing key not overwritten
+        assert result["b"] == 2  # missing key filled in
 
     def test_empty_d2(self):
         d1 = {"x": 10}
@@ -795,8 +845,10 @@ class TestClassMatch:
     def test_no_properties_is_noop(self):
         class A:
             pass
+
         class B:
             pass
+
         a, b = A(), B()
         result = utils.class_match(a, b)
         assert result is a
@@ -805,6 +857,7 @@ class TestClassMatch:
 # ---------------------------------------------------------------------------
 # get_users_in_tweet
 # ---------------------------------------------------------------------------
+
 
 class TestGetUsersInTweet:
     def _make_account_obj(self, acct, id=None):
@@ -867,6 +920,7 @@ class TestGetUsersInTweet:
 # demojify — top-level field via template_to_string
 # ---------------------------------------------------------------------------
 
+
 class TestDemojifyViaTemplate:
     def test_display_name_top_level_stripped(self):
         g.prefs.demojify = True
@@ -891,6 +945,7 @@ class TestDemojifyViaTemplate:
 # find_urls_in_text — edge cases
 # ---------------------------------------------------------------------------
 
+
 class TestFindUrlsExtra:
     def test_www_url(self):
         urls = utils.find_urls_in_text("go to www.example.com now")
@@ -906,13 +961,13 @@ class TestFindUrlsExtra:
 # notification_to_status — dict-based actor (streaming path)
 # ---------------------------------------------------------------------------
 
+
 class TestNotificationDictActor:
     def test_dict_actor_converted(self):
         n = AttrDict(
             id="n99",
             type="follow",
-            account={"acct": "dict_actor@example.com", "id": 500,
-                     "display_name": "Dict Actor"},
+            account={"acct": "dict_actor@example.com", "id": 500, "display_name": "Dict Actor"},
             status=None,
             created_at=None,
         )

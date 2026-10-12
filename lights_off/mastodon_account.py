@@ -62,10 +62,7 @@ class MastodonAccount(object):
         self.prefs.soundpack = self.prefs.get("soundpack", "default")
         self.prefs.soundpan = self.prefs.get("soundpan", 0)
 
-        needs_auth = (
-            not self.prefs.access_token
-            or not self.prefs.instance
-        )
+        needs_auth = not self.prefs.access_token or not self.prefs.instance
 
         if needs_auth:
             instance_url = ask(
@@ -79,9 +76,7 @@ class MastodonAccount(object):
                 instance_url = "https://" + instance_url
             self.prefs.instance = instance_url
 
-        instance_confpath = os.path.join(
-            self.confpath, self.prefs.instance.replace("://", "_").replace("/", "_")
-        )
+        instance_confpath = os.path.join(self.confpath, self.prefs.instance.replace("://", "_").replace("/", "_"))
         os.makedirs(instance_confpath, exist_ok=True)
 
         client_id, client_secret = _get_or_register_app(self.prefs.instance, instance_confpath)
@@ -124,9 +119,7 @@ class MastodonAccount(object):
 
         if globals.currentAccount is None:
             globals.currentAccount = self
-            main.window.SetLabel(
-                self.me.acct + " - " + application.name + " " + application.version
-            )
+            main.window.SetLabel(self.me.acct + " - " + application.name + " " + application.version)
 
         timeline.add(self, "Home", "home")
         timeline.add(self, "Notifications", "notifications")
@@ -232,10 +225,12 @@ class MastodonAccount(object):
 
     def _paginate(self, func, id, limit=80):
         from mastodon.types_base import AttribAccessDict
+
         def _promote(item):
             if isinstance(item, dict) and not isinstance(item, AttribAccessDict):
                 return AttribAccessDict(**item)
             return item
+
         results = []
         page = func(id, limit=limit)
         count = 0
@@ -270,7 +265,7 @@ class MastodonAccount(object):
         # Check relationships in batches of 40 (API limit)
         following_ids = set()
         for i in range(0, len(followers), 40):
-            batch = followers[i:i+40]
+            batch = followers[i : i + 40]
             rels = self.api.account_relationships([u.id for u in batch])
             for rel in rels:
                 if rel.following:

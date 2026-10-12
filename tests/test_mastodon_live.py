@@ -5,8 +5,8 @@ All tests in this file require valid credentials in .env and are marked `live`.
 They are safe to run: any posts created are immediately deleted or posted as
 `private` visibility so they don't appear on public timelines.
 """
+
 import pytest
-from mastodon import MastodonError
 
 
 pytestmark = pytest.mark.live
@@ -68,6 +68,7 @@ class TestSearch:
     def test_search_v2_no_limit_kwarg(self, api):
         """Confirm search_v2 does NOT accept a limit param (API difference)."""
         import inspect
+
         sig = inspect.signature(api.search_v2)
         assert "limit" not in sig.parameters
 
@@ -177,6 +178,7 @@ class TestHtmlContent:
             def __init__(self):
                 super().__init__()
                 self.parts = []
+
             def handle_data(self, d):
                 self.parts.append(d)
 

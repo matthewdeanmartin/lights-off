@@ -50,10 +50,7 @@ class OSXKeyboardHandler(KeyboardHandler):
 
 class KeyboardCapturingNSApplication(NSApplication):
     def sendEvent_(self, theEvent):
-        if (
-            theEvent.type() == NSSystemDefined
-            and theEvent.subtype() == kEventHotKeyPressedSubtype
-        ):
+        if theEvent.type() == NSSystemDefined and theEvent.subtype() == kEventHotKeyPressedSubtype:
             self.activateIgnoringOtherApps_(True)
-            NSRunAlertPanel(u"Hot Key Pressed", u"Hot Key Pressed", None, None, None)
+            NSRunAlertPanel("Hot Key Pressed", "Hot Key Pressed", None, None, None)
             super(NSApplication, self).sendEvent_(theEvent)

@@ -3,17 +3,18 @@ Unit tests for MastodonAccount methods using mocked Mastodon API.
 
 No network, no wx, no sound_lib required.
 """
+
 import sys
 import types
 import unittest.mock as mock
 import pytest
 from mastodon.types_base import AttribAccessDict, PaginatableList
-from mastodon.return_types import Account, Status
 
 
 # ---------------------------------------------------------------------------
 # Stub heavy dependencies so mastodon_account.py can be imported
 # ---------------------------------------------------------------------------
+
 
 def _stub(name, **attrs):
     m = types.ModuleType(name)
@@ -74,15 +75,18 @@ app_mod.shortname = "lights-off"
 # Force the real mastodon_account module — test_utils.py stubs it as a bare
 # module, so explicitly remove the stub and reimport the real one.
 sys.modules.pop("lights_off.mastodon_account", None)
-import importlib
-import lights_off.mastodon_account as _ma_module
+import importlib  # noqa: E402
+import lights_off.mastodon_account as _ma_module  # noqa: E402
+
 importlib.reload(_ma_module)
+
 
 # Build a standalone fake globals object that mastodon_account.globals will
 # point to — completely independent of lights_off.globals so test_utils.py
 # cannot interfere.
 class _FakeGlobals:
     pass
+
 
 _fake_g = _FakeGlobals()
 
@@ -117,12 +121,20 @@ def _fresh_globals():
 # Helpers to build Mastodon-typed objects
 # ---------------------------------------------------------------------------
 
+
 def _account(**kwargs) -> AttribAccessDict:
     base = dict(
-        id="1", acct="user@mastodon.social", display_name="Test User",
-        followers_count=10, following_count=5, statuses_count=100,
-        note="<p>bio</p>", url="https://mastodon.social/@user",
-        locked=False, following=False, last_status_at=None,
+        id="1",
+        acct="user@mastodon.social",
+        display_name="Test User",
+        followers_count=10,
+        following_count=5,
+        statuses_count=100,
+        note="<p>bio</p>",
+        url="https://mastodon.social/@user",
+        locked=False,
+        following=False,
+        last_status_at=None,
         created_at=None,
     )
     base.update(kwargs)
@@ -134,9 +146,12 @@ def _paginatable(items, next_max_id=None):
     """Build a PaginatableList with optional _pagination_next."""
     pl = PaginatableList(items)
     if next_max_id is not None:
-        pl._pagination_next = {"max_id": next_max_id, "limit": 80,
-                               "_pagination_method": "GET",
-                               "_pagination_endpoint": "/fake"}
+        pl._pagination_next = {
+            "max_id": next_max_id,
+            "limit": 80,
+            "_pagination_method": "GET",
+            "_pagination_endpoint": "/fake",
+        }
     else:
         pl._pagination_next = None
     return pl
@@ -145,6 +160,7 @@ def _paginatable(items, next_max_id=None):
 # ---------------------------------------------------------------------------
 # Build a MastodonAccount with a mocked api
 # ---------------------------------------------------------------------------
+
 
 def _make_account_obj():
     """Return a MastodonAccount instance with api fully mocked, skipping __init__."""
@@ -169,6 +185,7 @@ def _make_account_obj():
 # ---------------------------------------------------------------------------
 # _paginate
 # ---------------------------------------------------------------------------
+
 
 class TestPaginate:
     def test_single_page_no_next(self):
@@ -196,7 +213,7 @@ class TestPaginate:
         _fake_g.prefs.user_limit = 2
         pages = [_paginatable([_account(id=str(i))], next_max_id=str(i + 1)) for i in range(10)]
         acc.api.account_followers.side_effect = pages
-        result = acc._paginate(acc.api.account_followers, "42")
+        acc._paginate(acc.api.account_followers, "42")
         assert acc.api.account_followers.call_count <= 3
 
     def test_promotes_plain_dicts(self):
@@ -231,6 +248,7 @@ class TestPaginate:
 # followers / friends
 # ---------------------------------------------------------------------------
 
+
 class TestFollowersFriends:
     def test_followers_delegates_to_paginate(self):
         acc = _make_account_obj()
@@ -252,6 +270,7 @@ class TestFollowersFriends:
 # ---------------------------------------------------------------------------
 # mutual_following / not_following / not_following_me
 # ---------------------------------------------------------------------------
+
 
 class TestUserAnalysis:
     def _acc_with_followers_friends(self, follower_ids, friend_ids):
@@ -311,6 +330,7 @@ class TestUserAnalysis:
 # tweet / retweet / like / unlike
 # ---------------------------------------------------------------------------
 
+
 class TestPostActions:
     def test_tweet_posts_status(self):
         acc = _make_account_obj()
@@ -343,6 +363,7 @@ class TestPostActions:
 
     def test_tweet_returns_false_on_error(self):
         from mastodon import MastodonError
+
         acc = _make_account_obj()
         acc.api.status_post.side_effect = MastodonError("rate limited")
         result = acc.tweet("bad")
@@ -367,6 +388,7 @@ class TestPostActions:
 # ---------------------------------------------------------------------------
 # follow / unfollow / block / unblock / mute / unmute
 # ---------------------------------------------------------------------------
+
 
 class TestSocialActions:
     def _acc_with_search(self, found_id="99"):
@@ -421,6 +443,7 @@ class TestSocialActions:
 # quote
 # ---------------------------------------------------------------------------
 
+
 class TestQuote:
     def test_quote_appends_url(self):
         acc = _make_account_obj()
@@ -447,9 +470,11 @@ class TestQuote:
 # havent_posted
 # ---------------------------------------------------------------------------
 
+
 class TestHaventPosted:
     def test_filters_old_posters(self):
         import datetime
+
         acc = _make_account_obj()
         old = _account(id="1", last_status_at=datetime.datetime(2020, 1, 1))
         recent = _account(id="2", last_status_at=datetime.datetime.now())

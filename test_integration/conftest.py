@@ -63,6 +63,7 @@ from mastodon_mock.testing import MockServer  # noqa: E402
 # display, audio device, or screen reader — same approach as the unit suite.
 # ---------------------------------------------------------------------------
 
+
 def _stub(name: str, **attrs: object) -> types.ModuleType:
     module = types.ModuleType(name)
     for key, value in attrs.items():

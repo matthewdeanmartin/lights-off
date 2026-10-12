@@ -1,10 +1,10 @@
 from mastodon import StreamListener
 from lights_off import speak
 from lights_off import utils
+import contextlib
 
 
 class MastodonStreamListener(StreamListener):
-
     def __init__(self, account):
         super().__init__()
         self.account = account
@@ -30,10 +30,8 @@ class MastodonStreamListener(StreamListener):
         if stub is None:
             return
         if getattr(stub, "account", None) is not None:
-            try:
+            with contextlib.suppress(Exception):
                 utils.add_users(stub)
-            except Exception:
-                pass
         notif_tl = next(
             (t for t in self.account.timelines if t.type == "notifications"),
             None,

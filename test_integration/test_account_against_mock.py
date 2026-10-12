@@ -35,9 +35,7 @@ class TestPosting:
         assert str(reply.in_reply_to_id) == str(parent.id)
 
     def test_tweet_with_spoiler_text(self, me_account) -> None:
-        status = me_account.tweet(
-            "the body", visibility="public", spoiler_text="content warning"
-        )
+        status = me_account.tweet("the body", visibility="public", spoiler_text="content warning")
         assert status is not False
         assert status.spoiler_text == "content warning"
 
@@ -148,7 +146,7 @@ class TestFollowersAndFriends:
         assert {"friend", "stranger"}.issubset(accts)
 
     def test_mutual_following_intersection(self, me_account, mock_server) -> None:
-        """"friend" follows back → friend is a mutual."""
+        """ "friend" follows back → friend is a mutual."""
         me_id = me_account.me.id
         mock_server.client("friend").account_follow(me_id)
 
@@ -156,7 +154,7 @@ class TestFollowersAndFriends:
         assert "friend" in {u.acct for u in mutuals}
 
     def test_not_following_me_finds_one_way_friends(self, me_account) -> None:
-        """"me" follows "friend"; if friend does not follow back, it shows here."""
+        """ "me" follows "friend"; if friend does not follow back, it shows here."""
         result = me_account.not_following_me()
         # "friend" is followed by "me" but (absent a follow-back) is not a follower.
         assert "friend" in {u.acct for u in result}
